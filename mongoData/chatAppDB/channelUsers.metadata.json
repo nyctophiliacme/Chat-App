@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"chatAppDB.channelUsers"},{"v":2,"key":{"channel_id":1},"name":"channel_id_index","ns":"chatAppDB.channelUsers"}],"uuid":"bc0f6387a4594c29a68b174ee22b291d"}

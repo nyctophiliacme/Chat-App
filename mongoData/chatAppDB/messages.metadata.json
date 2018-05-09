@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"chatAppDB.messages"},{"v":2,"key":{"channel_id":1},"name":"channel_id_index","ns":"chatAppDB.messages"}],"uuid":"a272a55f96dc4c61981864b1cf5de778"}
