@@ -27,26 +27,31 @@ app.listen(3005, function () {
 });
 
 
-app.get('/users', function(request, response)
-{
-	console.log("User invoked");
-	response.json([
-		{id: 1, username: "Pransh"},
-		{id: 2, username: "Tiwari"}
-	]);
-});
+// app.get('/users', function(request, response)
+// {
+// 	console.log("User invoked");
+// 	response.json([
+// 		{id: 1, username: "Pransh"},
+// 		{id: 2, username: "Tiwari"}
+// 	]);
+// });
 
 app.get('/checkLogin', function(request, response)
 {
+	console.log(request.session.email);
 	if(!request.session.email)
 	{
-		response.json([
-			{status: "Not Ok"}
-		]);
+		response.send(JSON.stringify({
+			result: 'No Session'
+		}));
 	}
-	response.json([
-			{status: "Valid"}
-		]);
+	else
+	{
+		response.send(JSON.stringify({
+			result: 'Session Exists',
+			email: request.session.email
+		}));
+	}
 });
 
 
@@ -71,12 +76,12 @@ app.post('/login', function(request, response)
 			throw err;
 		var dbo = db.db("chatAppDB");
 		var query = {email : email};
-		dbo.collection("users").find(query, {password: 1}).toArray(function(err, result) {
+		dbo.collection("users").find(query).toArray(function(err, result) {
 		    if (err) throw err;
 		    if (typeof result !== 'undefined' && result.length > 0) {
 			    // console.log("User Exists");
-			    // console.log(result[0].password);
-			    // console.log(result);
+			    console.log(result[0].password);
+			    console.log(result);
 			    if(result[0].password == password)
 			    {
 			    	save_session(request, email);
@@ -105,4 +110,6 @@ app.post('/login', function(request, response)
 
 var save_session = function(request, email)
 {
-	request.session.em
+	request.session.email = email;
+	console.log(request.session.email);
+}

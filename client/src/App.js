@@ -9,9 +9,18 @@ class App extends Component {
   };
   componentDidMount()
   {
-     fetch('/users')
-     .then(res => res.json())
-     .then(users => this.setState({ users }));
+     // fetch('/users')
+     // .then(res => res.json())
+     // .then(users => this.setState({ users }));
+
+    fetch('/checkLogin') 
+    .then((response) => response.text())
+    .then((responseText) => {
+      console.log(responseText);
+    })
+    .catch((error) => {
+        console.error(error);
+    });
   }
   handleClick = event => {
     event.preventDefault();
@@ -44,9 +53,6 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <h1>
-          Users
-        </h1>
         <ul>
           {this.state.users.map(user => 
             <li key = {user.id} > {user.username} </li>
