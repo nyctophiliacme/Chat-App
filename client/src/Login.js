@@ -17,7 +17,26 @@ export default class Login extends Component
         email: "",
         password: ""
       });
-      this.props.onSubmit(this.state);
+      
+      fetch('/login',
+      {
+         headers: {
+           'Accept': 'application/json',
+           'Content-Type': 'application/json',
+         },
+         method: 'POST',
+         credentials: 'same-origin',
+         body: JSON.stringify({email: this.state.email, password: this.state.password})
+         //JSON.stringify({ fields })
+      })
+      .then((response) => response.text())
+      .then((responseText) => {
+        console.log(responseText);
+      })
+      .catch((error) => {
+          console.error(error);
+      });
+
     }
     render()
     {

@@ -6,16 +6,15 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
-    "mongodb": "^3.0.8"
+    "mongodb": "^3.0.8",
+    "mongoose": "^5.1.0"
   },
   "devDependencies": {
     "concurrently": "^3.5.0"
   },
   "scripts": {
     "start": "concurrently \"node server.js\" \"cd client && npm start\" \"mongod --quiet\"",
-    "client": "cd client && npm start",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently --kill-others-on-fail \"node start\" \"node client\""
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Pransh",
   "license": "ISC",

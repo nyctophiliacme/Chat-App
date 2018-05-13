@@ -1,70 +1,66 @@
 import React, { Component } from 'react';
 import './App.css';
+
 import Login from "./Login";
+import Home from "./Home";
+
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Switch,
+  Redirect
+} from 'react-router-dom'
 
 class App extends Component {
   state = { 
-    users: [],
-
+    user: "",
+    isLoggedIn: false
   };
   componentDidMount()
   {
-     // fetch('/users')
-     // .then(res => res.json())
-     // .then(users => this.setState({ users }));
-
-    fetch('/checkLogin') 
-    .then((response) => response.text())
-    .then((responseText) => {
-      console.log(responseText);
-    })
-    .catch((error) => {
-        console.error(error);
-    });
-  }
-  handleClick = event => {
-    event.preventDefault();
-    console.log("Link was Clicked");
-    window.location = "login.html";
-  }
-  onSubmit = fields => {
-    console.log("Fields are", fields);
-    console.log(fields.email)
-    console.log("Stringified", JSON.stringify({fields}));
-    fetch('/login',
+    fetch('/checkLogin',
     {
-       headers: {
-         'Accept': 'application/json',
-         'Content-Type': 'application/json'
-       },
-       method: 'POST',
-       body: JSON.stringify({email: fields.email, password: fields.password})
-       //JSON.stringify({ fields })
-    })
+      method: 'GET',
+      credentials: 'same-origin'
+    }) 
     .then((response) => response.text())
-    .then((responseText) => {
-      console.log(responseText);
+    .then((res) => {
+      var resJSON = JSON.parse(res);
+      console.log(resJSON.result);
+      if(resJSON.result === 'Session Exists')
+      {
+        this.setState = {isLoggedIn: true, user: resJSON.email};
+      }
     })
     .catch((error) => {
         console.error(error);
     });
-
-  };
+  }
+  DisplayConditionalHome()
+  {
+    if(this.state.isLoggedIn === false)
+    {
+      // return <Login />
+    }
+    else
+    {
+      // return <Login />
+    }
+  }
   render() {
     return (
+      <Router>
       <div className="App">
-        <ul>
-          {this.state.users.map(user => 
-            <li key = {user.id} > {user.username} </li>
-          )}
-        </ul>
-        <button onClick={this.handleClick}> Login Form </button>
-        <Login onSubmit = {fields => this.onSubmit(fields)}/>
-        <p>
-          {JSON.stringify(this.state.fields, null, 2)}
-        </p>
+        
+        {this.DisplayConditionalHome()}
+        <Switch>
+          <Route path="/" exact={true} component={Home} />
+          <Route path="/login" component={Login} />
+        </Switch>
       </div>
 
+      </Router>
     );
   }
 }

@@ -1,44 +1,55 @@
 //for express
-var express = require('express');
-var app = express();
+const express = require('express');
+const app = express();
 
 //Body Parser Setup
-var bodyParser = require('body-parser');
-var path = require("path");
+const bodyParser = require('body-parser');
+const path = require("path");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(express.static(path.join(__dirname, 'www')));
-
+app.set('trust proxy', 1);
 //For session
-var session = require("express-session");
+const session = require("express-session");
 app.use(session({
   secret: 'secret',
-  resave: true,
-  saveUninitialized: false
+  resave: false,
+  saveUninitialized: true,
+  // proxy: true,
+  // cookie: { secure: true }
 }));
 
 //For mongodb
 var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/";
+var url = "mongodb://localhost:27017/chatAppDB";
+
+//For mongoose
+var mongoose = require('mongoose');
+
+mongoose.connect(url, function(err)
+{
+	if(err)
+		throw err;
+	console.log("Mongoose connection established");
+});
+
+var userSchema = mongoose.Schema({
+    _id: mongoose.Schema.Types.ObjectId,
+    email: String,
+    password: String,
+});
+
+var User = mongoose.model('User', userSchema);
 
 //Listen to the required Port
 app.listen(3005, function () {
 	console.log('Server is running. Point your browser to: http://localhost:3005');
 });
 
-
-// app.get('/users', function(request, response)
-// {
-// 	console.log("User invoked");
-// 	response.json([
-// 		{id: 1, username: "Pransh"},
-// 		{id: 2, username: "Tiwari"}
-// 	]);
-// });
-
 app.get('/checkLogin', function(request, response)
 {
 	console.log(request.session.email);
+	console.log(request.session);
 	if(!request.session.email)
 	{
 		response.send(JSON.stringify({
@@ -70,46 +81,41 @@ app.post('/login', function(request, response)
 			password: request.body.password
 		}
 	}
-	MongoClient.connect(url, function(err, db)
+	var query = {email : email};
+	User.find(query, function(err, result)
 	{
-		if(err)
-			throw err;
-		var dbo = db.db("chatAppDB");
-		var query = {email : email};
-		dbo.collection("users").find(query).toArray(function(err, result) {
-		    if (err) throw err;
-		    if (typeof result !== 'undefined' && result.length > 0) {
-			    // console.log("User Exists");
-			    console.log(result[0].password);
-			    console.log(result);
-			    if(result[0].password == password)
-			    {
-			    	save_session(request, email);
-			    	response.send(JSON.stringify({
-						result: 'Successful'
-					}));
-			    }
-			    else
-			    {
-			    	response.send(JSON.stringify({
-						result: 'Wrong Password'
-					}));
-			    }
-			}
-			else
-			{
-				response.send(JSON.stringify({
-					result: 'No Such User'
+		if (err) throw err;
+		console.log(result);
+	    if (typeof result !== 'undefined' && result.length > 0) {
+		    // console.log("User Exists");
+		    console.log(result[0].password);
+		    console.log(result);
+		    if(result[0].password == password)
+		    {
+		    	save_session(request, email);
+		    	console.log(request.session);
+		    	response.send(JSON.stringify({
+					result: 'Successful'
 				}));
-			}
-		    // console.log(result);
-		    db.close();
-	  });
-	});
+		    }
+		    else
+		    {
+		    	response.send(JSON.stringify({
+					result: 'Wrong Password'
+				}));
+		    }
+		}
+		else
+		{
+			response.send(JSON.stringify({
+				result: 'No Such User'
+			}));
+		}
+	})
 });
-
 var save_session = function(request, email)
 {
 	request.session.email = email;
+	console.log(request.session);
 	console.log(request.session.email);
 }
