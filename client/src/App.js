@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import './App.css';
+import './css/App.css';
 
 import Login from "./Login";
 import Home from "./Home";
-
+import Dashboard from "./Dashboard";
 import {
   BrowserRouter as Router,
   Route,
@@ -30,22 +30,28 @@ class App extends Component {
       console.log(resJSON.result);
       if(resJSON.result === 'Session Exists')
       {
-        this.setState = {isLoggedIn: true, user: resJSON.email};
+        this.setState({isLoggedIn: true, user: resJSON.email});
+        return <Redirect to='/dashboard'/>
       }
     })
     .catch((error) => {
         console.error(error);
     });
   }
-  DisplayConditionalHome()
+  DisplayConditionalHome() 
   {
     if(this.state.isLoggedIn === false)
     {
-      // return <Login />
+      // <Redirect to = "/login" push>
+      // return <Redirect to='/home'/>
+
     }
     else
     {
-      // return <Login />
+       // history.push('/dashboard');
+       // <Redirect to = "/dashboard" push>
+
+       // return <Redirect to='/dashboard'/>
     }
   }
   render() {
@@ -56,7 +62,9 @@ class App extends Component {
         {this.DisplayConditionalHome()}
         <Switch>
           <Route path="/" exact={true} component={Home} />
+          <Route path="/home" component={Home} />
           <Route path="/login" component={Login} />
+          <Route path="/dashboard" component={Dashboard} />
         </Switch>
       </div>
 
