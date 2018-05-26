@@ -1,0 +1,94 @@
+:root
+{
+	--dark: #2c3e50;
+	--light: #ecf0f1;
+	--text-light: #f1f2f6;
+	--text-blue: #48dbfb;
+	--text-red: #e74c3c;
+	--text-green: #2ecc71;
+	--hover: #2ecc71;
+	--pur-light: #9b59b6;
+	--pur-dark: #8e44ad;
+}
+@font-face 
+{ 
+    font-family: OpenSans; 
+    src: url(fonts/OpenSans-Regular.ttf);
+}
+@font-face 
+{ 
+    font-family: OpenSansBold; 
+    src: url(fonts/OpenSans-Bold.ttf);
+}
+@font-face 
+{
+    font-family: techno;
+    src: url(fonts/techno.ttf);
+}
+.main
+{
+	background-color: var(--light);
+	height: 100%;
+}
+.heading
+{
+	height: 7%;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--dark);
+}
+.heading-title
+{
+	font-family: techno;
+    letter-spacing: 4px;
+	font-size: 1.8em;
+	color: var(--light);
+}
+.chat-container
+{
+	background-color: #ecf0f1;
+	height: 93%;
+}
+.logout-button
+{
+	position: absolute;
+	right: 1%;
+}
+.height-100
+{
+	height: 100%;
+}
+.side-bar
+{
+	background-color: var(--pur-light);
+	color: var(--light);
+}
+.welcome
+{
+	font-family: OpenSans;
+	margin-top: 10px;
+	border-bottom: 1px solid var(--dark);
+	padding: 10px 0;
+}
+.channel-heading
+{
+	margin-top: 10px;
+	/*font-weight: 600;*/
+	/*font-size: 1.1em;*/
+	font-family: OpenSansBold;
+}
+.messages-container
+{
+	background-color: var(--light);
+}
+.image-button
+{
+	height: 20px;
+	width: 20px;
+	margin-top: 3px;
+}
+.image-button:hover
+{
+	cursor: pointer;
+}

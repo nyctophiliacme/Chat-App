@@ -25,6 +25,7 @@ var url = "mongodb://localhost:27017/chatAppDB";
 
 //For mongoose
 var mongoose = require('mongoose');
+var ObjectID = require('mongodb').ObjectID;
 
 mongoose.connect(url, function(err)
 {
@@ -35,6 +36,7 @@ mongoose.connect(url, function(err)
 
 var userSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
+    name: String,
     email: String,
     password: String,
 });
@@ -65,6 +67,63 @@ app.get('/checkLogin', function(request, response)
 	}
 });
 
+app.post('/signup', function(request, response)
+{
+	response.setHeader('Content-Type', 'application/json');
+
+	var name = request.body.name;
+	var email = request.body.email;
+	var password = request.body.password;
+
+	if(request.body.email && request.body.password && request.body.name)
+	{
+		var userData = {
+			_id: new ObjectID(),
+			email: request.body.email,
+			password: request.body.password,
+			name: request.body.name
+		}
+	}
+	else
+	{
+		response.send(JSON.stringify({
+			message: 'Invalid Data'
+		}));
+	}
+	var query = {email : email};
+	User.find(query, function(err, result)
+	{
+		if (err) throw err;
+		console.log(result);
+	    if (typeof result !== 'undefined' && result.length > 0) {
+	    	console.log(flag);
+	    	response.send(JSON.stringify({
+				message: 'User exists'
+			}));
+		}
+		else
+		{
+			var userObj = new User(userData);
+			userObj.save(function(error,data)
+			{
+				if(error)
+				{
+					response.send(JSON.stringify({
+						message: "Unable to write to DB",
+						extra: error
+					}));
+				}
+				else
+				{
+					response.send(JSON.stringify({
+						extra: data,
+						message: "Successful"
+					}));
+				}
+			});
+		}
+	});
+});
 
 app.post('/login', function(request, response)
 {
@@ -81,6 +140,12 @@ app.post('/login', function(request, response)
 			password: request.body.password
 		}
 	}
+	else
+	{
+		response.send(JSON.stringify({
+			message: 'Invalid Data'
+		}));
+	}
 	var query = {email : email};
 	User.find(query, function(err, result)
 	{
@@ -95,20 +160,22 @@ app.post('/login', function(request, response)
 		    	save_session(request, email);
 		    	console.log(request.session);
 		    	response.send(JSON.stringify({
-					result: 'Successful'
+		    		email: email,
+		    		name: result[0].name,
+					message: 'Successful'
 				}));
 		    }
 		    else
 		    {
 		    	response.send(JSON.stringify({
-					result: 'Wrong Password'
+					message: 'Wrong Password'
 				}));
 		    }
 		}
 		else
 		{
 			response.send(JSON.stringify({
-				result: 'No Such User'
+				message: 'No Such User'
 			}));
 		}
 	})
