@@ -14,6 +14,7 @@ export default class CreateChannel extends Component
 		this.handleNameChange = this.handleNameChange.bind(this);
 		this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.handleBack = this.handleBack.bind(this);
 	}
 	handleSubmit(e)
 	{
@@ -41,10 +42,12 @@ export default class CreateChannel extends Component
 			// console.log(responseText);
 			if(responseText.message === "Successful")
 			{
-				this.setState({
-	                error: '',
-	                fireRedirect: true
-	            });
+				// this.setState({
+	   //              error: '',
+	   //              fireRedirect: true
+	   //          });
+	            this.props.fetchChannels();
+	            this.props.stateHelper();
 			}
 			else
 	        {
@@ -67,10 +70,17 @@ export default class CreateChannel extends Component
 			description: e.target.value
 		})
 	}
+	handleBack() {
+		this.props.stateHelper();
+		// this.setState({
+  //           fireRedirect: true
+  //       });
+	}
 	render()
     {
         return(
-			<div className="container-fluid">
+        	<div>
+			<div className="container-fluid add-box">
 			    <div className="jumbotron">
 			        <h2>Please enter name of the channel</h2>
 			        <form onSubmit={this.handleSubmit}>
@@ -81,13 +91,16 @@ export default class CreateChannel extends Component
 				            <input type="text" className="form-control" onChange={this.handleDescriptionChange} />
 				        </div>
 				        <button type="submit" className="btn btn-primary">Create</button>
+				        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				        <button className = "btn btn-primary" onClick = {this.handleBack} >Back</button>
 			        </form>
 			        <br />
 			        <p className="text-danger">{this.state.error}</p>
 			    </div>
-
-			    {this.state.fireRedirect && <Redirect to='/dashboard' push={true} />}
 			</div>
+			<div className = "cover">
+			</div>
+		</div>
         );
     }
 }

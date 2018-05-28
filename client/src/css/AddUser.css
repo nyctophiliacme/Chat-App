@@ -1,0 +1,19 @@
+.main
+{
+	/*opacity: 0.5;*/
+}
+.add-box
+{
+	position: absolute;
+	opacity: 1;
+	z-index: 2;
+	top: 20%;
+}
+.cover
+{
+	height: 100%;
+	width: 100%;
+	background-color: #2c3e50;
+	position: absolute;
+	top: 0;
+}

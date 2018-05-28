@@ -1,20 +1,29 @@
 import React, { Component } from 'react';
 import './css/Dashboard.css';
 import plusButton from './images/plus-button.png';
-import { Link } from 'react-router-dom';
+import plusButtonDark from './images/plus-button-dark.png';
+import { BrowserRouter as Router,Link, Route, Redirect } from 'react-router-dom';
 import Channel from './Channel.js';
+import AddUser from './AddUser.js';
+import CreateChannel from "./CreateChannel";
 export default class Dashboard extends Component
 {
 	constructor(props) {
 		super(props);
 		this.state = {
 			channels: [],
-			currentChannel: 'mychannel',
-			channelArray: []
+			currentChannel: '',
+			channelArray: [],
+			showAddUser: null,
+			showCreateChannel: null
 		};
 		this.logout = this.logout.bind(this);
 		this.changeChannel = this.changeChannel.bind(this);
 		this.channelUtility = this.channelUtility.bind(this);
+		this.fetchChannels = this.fetchChannels.bind(this);
+		this.stateHelper = this.stateHelper.bind(this);
+		this.handleAddUser = this.handleAddUser.bind(this);
+		this.handleCreateChannel = this.handleCreateChannel.bind(this);
 		// console.log(this.props.user);
 	}
 	channelUtility()
@@ -50,7 +59,7 @@ export default class Dashboard extends Component
 		e.preventDefault();
 		this.props.authenticate({isLoggedIn: false});
 	}
-	componentDidMount()
+	fetchChannels()
 	{
 		fetch('/loadChannels',
 		{
@@ -86,11 +95,39 @@ export default class Dashboard extends Component
 			console.log(error);
 		});
 	}
+	stateHelper()
+	{
+		this.setState({
+			showCreateChannel: null,
+			showAddUser: null
+		});
+	}
+	handleCreateChannel()
+	{
+		console.log("asdf");
+		this.setState(
+		{
+			showCreateChannel: (<CreateChannel user={this.props.user} 
+				fetchChannels={this.fetchChannels} 
+				stateHelper = {this.stateHelper} />)
+		});
+	}
+	handleAddUser()
+	{
+		console.log("clicked");
+		this.setState({
+			showAddUser: (<AddUser channel={this.state.currentChannel}  />)
+		});
+	}
+	componentDidMount()
+	{
+		this.fetchChannels();
+	}
 	
     render()
     {
-        return(
-
+    	return(
+        	<Router>
 			<div className = "main">
 				<div className = "container-fluid heading">
 					<span className = "heading-title">
@@ -108,9 +145,7 @@ export default class Dashboard extends Component
 								<span className = "temp float-left">
 									Channels
 								</span>
-								<Link to={`/createChannel`}>
-									<img src = {plusButton} className = "image-button float-right"  alt = "Add" />
-								</Link>
+								<img src = {plusButton} onClick={this.handleCreateChannel} className = "image-button float-right"  alt = "Add" />
 							</div>
 							<div className = "channel-container">
 								<ul className = "sidebar-nav">
@@ -120,10 +155,15 @@ export default class Dashboard extends Component
 						</div>
 						<div className = "messages-container col-sm-10">
 							{this.state.currentChannel}
+							<img src = {plusButtonDark} onClick={this.handleAddUser} className = "image-button float-right"  alt = "Add" />
 						</div>
 					</div>
-				</div>   
+				</div>  
+				{this.state.showAddUser}
+				{this.state.showCreateChannel}
 			</div>
+			</Router>
         );
+
     }
 }

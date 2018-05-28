@@ -3,7 +3,6 @@ import Login from "./Login";
 import Home from "./Home";
 import Signup from "./Signup";
 import Dashboard from "./Dashboard";
-import CreateChannel from "./CreateChannel";
 import {
   BrowserRouter as Router,
   Route,
@@ -56,11 +55,6 @@ export default class App extends Component {
           <Route path='/dashboard' render={() => (
             this.state.user.isLoggedIn ? 
                     (<Dashboard authenticate={this.authenticate} user={this.state.user}  />) : 
-                    (<Redirect to="/home"/>)
-          )} />
-          <Route path='/createChannel' render={() => (
-            this.state.user.isLoggedIn ? 
-                    (<CreateChannel user={this.state.user}  />) : 
                     (<Redirect to="/home"/>)
           )} />
         </Switch>
