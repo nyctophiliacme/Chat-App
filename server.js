@@ -39,10 +39,33 @@ var userSchema = mongoose.Schema({
     name: String,
     email: String,
     password: String,
+},
+{
+	collection: 'users'
 });
 
-var User = mongoose.model('User', userSchema);
+var channelSchema = mongoose.Schema(
+{
+    _id: mongoose.Schema.Types.ObjectId,
+    name: String,
+    description: String
+},
+{
+	collection: 'channels'
+});
 
+var channelUserSchema = mongoose.Schema({
+	_id: mongoose.Schema.Types.ObjectId,
+	email: String,
+	channelName: String
+},
+{
+	collection: 'channelUsers'
+});
+
+var User = mongoose.model('users', userSchema);
+var Channel = mongoose.model('channels', channelSchema);
+var ChannelUser = mongoose.model('channelUsers', channelUserSchema);
 //Listen to the required Port
 app.listen(3005, function () {
 	console.log('Server is running. Point your browser to: http://localhost:3005');
@@ -96,7 +119,6 @@ app.post('/signup', function(request, response)
 		if (err) throw err;
 		console.log(result);
 	    if (typeof result !== 'undefined' && result.length > 0) {
-	    	console.log(flag);
 	    	response.send(JSON.stringify({
 				message: 'User exists'
 			}));
@@ -186,3 +208,116 @@ var save_session = function(request, email)
 	console.log(request.session);
 	console.log(request.session.email);
 }
+
+app.post('/createChannel', function(request, response)
+{
+	response.setHeader('Content-Type', 'application/json');
+	console.log(request.body);
+	var email = request.body.email;
+	var channelName = request.body.channelName;
+	var description = request.body.description;
+
+	if(request.body.email && request.body.channelName && request.body.description)
+	{
+		var channelData = {
+			_id: new ObjectID(),
+			name: channelName,
+			description: description
+		}
+		var query = {name : channelName};
+		Channel.find(query, function(err, result)
+		{
+			if (err) throw err;
+		    if (typeof result !== 'undefined' && result.length > 0) {
+		    	response.send(JSON.stringify({
+					message: 'Channel name already exists'
+				}));
+			}
+			else
+			{
+				var channelObj = new Channel(channelData);
+				channelObj.save(function(error,data)
+				{
+					if(error)
+					{
+						response.send(JSON.stringify({
+							message: "Unable to write to DB",
+							extra: error
+						}));
+					}
+					else
+					{
+						var channelUserData = {
+							_id: new ObjectID(),
+							email: email,
+							channelName: channelName
+						}
+						var channelUserObj = new ChannelUser(channelUserData);
+						channelUserObj.save(function(error,data)
+						{
+							if(error)
+							{
+								response.send(JSON.stringify({
+									message: "Unable to write to DB!",
+									extra: error
+								}));
+							}
+							else
+							{
+								response.send(JSON.stringify({
+									extra: data,
+									message: "Successful"
+								}));
+							}
+						});
+					}
+				});
+			}
+		});
+	}
+	else
+	{
+		response.send(JSON.stringify({
+			message: 'Please enter the channelName'
+		}));
+	}
+});
+
+
+app.post('/loadChannels', function(request, response)
+{
+	response.setHeader('Content-Type', 'application/json');
+	var email = request.body.email;
+	if(request.body.email)
+	{
+		var query = {email : email};
+		var constraints = { 
+	        __v: false,
+	        _id: false,
+	        email: false
+	    };
+		ChannelUser.find(query, constraints, function(err, result)
+		{
+			if (err) throw err;
+			console.log(result);
+		    if (typeof result !== 'undefined' && result.length > 0) {
+			    response.send(JSON.stringify({
+			    	message: 'Retrieved Channels',
+			    	data: result
+			    }))
+			}
+			else
+			{
+				response.send(JSON.stringify({
+					message: 'User has no channels'
+				}));
+			}
+		});
+	}
+	else
+	{
+		response.send(JSON.stringify({
+			message: 'No email'
+		}));
+	}
+});

@@ -2,23 +2,95 @@ import React, { Component } from 'react';
 import './css/Dashboard.css';
 import plusButton from './images/plus-button.png';
 import { Link } from 'react-router-dom';
+import Channel from './Channel.js';
 export default class Dashboard extends Component
 {
 	constructor(props) {
 		super(props);
+		this.state = {
+			channels: [],
+			currentChannel: 'mychannel',
+			channelArray: []
+		};
 		this.logout = this.logout.bind(this);
-		console.log(this.props.user);
+		this.changeChannel = this.changeChannel.bind(this);
+		this.channelUtility = this.channelUtility.bind(this);
+		// console.log(this.props.user);
+	}
+	channelUtility()
+	{
+		var temp = [];
+		for(var i = 0; i < this.state.channelArray.length; i++)
+		{
+			var is_selected = this.state.currentChannel === this.state.channelArray[i].channelName;
+			// console.log(is_selected);
+			temp.push(
+				<Channel key = {i} 
+				onClick = {this.changeChannel.bind(this)} 
+				isSelected = {is_selected}
+				value = {this.state.channelArray[i].channelName} />);
+		}
+		// console.log(temp);
+		this.setState({
+			channels: temp
+		});
+	}
+	changeChannel(val)
+	{
+		// console.log(val);
+		if(this.state.currentChannel !== val)
+		{
+			this.setState({
+				currentChannel: val
+			},
+			() => {this.channelUtility()});
+		}
 	}
 	logout(e) {
 		e.preventDefault();
 		this.props.authenticate({isLoggedIn: false});
 	}
-	channelAdd = () => {
-  		console.log('Click!!!!');
-   	}
+	componentDidMount()
+	{
+		fetch('/loadChannels',
+		{
+			headers:
+			{
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'same-origin',
+			body: JSON.stringify({
+				email: this.props.user.email
+			})
+		})
+		.then((response) => response.text())
+		.then((responseText) => {
+			responseText = JSON.parse(responseText);
+			if(responseText.message === "Retrieved Channels")
+			{
+				// console.log(responseText.data);
+				// this.state.channelArray = responseText.data;
+				this.setState({
+					channelArray: responseText.data
+				})
+				this.channelUtility();
+			}
+			else
+	        {
+	          	console.log(responseText.message);
+	        }
+		})
+		.catch((error) => {
+			console.log(error);
+		});
+	}
+	
     render()
     {
         return(
+
 			<div className = "main">
 				<div className = "container-fluid heading">
 					<span className = "heading-title">
@@ -33,18 +105,21 @@ export default class Dashboard extends Component
 								Hi, {this.props.user.name}
 							</div>
 							<div className = "channel-heading">
-								<span className = "float-left">
+								<span className = "temp float-left">
 									Channels
 								</span>
-								<Link to={`/dashboard/createChannel`}>
+								<Link to={`/createChannel`}>
 									<img src = {plusButton} className = "image-button float-right"  alt = "Add" />
 								</Link>
 							</div>
-							<div className = "">
+							<div className = "channel-container">
+								<ul className = "sidebar-nav">
+								{this.state.channels}
+								</ul>
 							</div>
 						</div>
 						<div className = "messages-container col-sm-10">
-							Messages
+							{this.state.currentChannel}
 						</div>
 					</div>
 				</div>   
