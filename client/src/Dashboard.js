@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './css/Dashboard.css';
 import plusButton from './images/plus-button.png';
 import plusButtonDark from './images/plus-button-dark.png';
-import { BrowserRouter as Router,Link, Route, Redirect } from 'react-router-dom';
 import Channel from './Channel.js';
 import AddUser from './AddUser.js';
 import CreateChannel from "./CreateChannel";
@@ -116,7 +115,8 @@ export default class Dashboard extends Component
 	{
 		console.log("clicked");
 		this.setState({
-			showAddUser: (<AddUser channel={this.state.currentChannel}  />)
+			showAddUser: (<AddUser channel={this.state.currentChannel}  
+								   stateHelper = {this.stateHelper}/>)
 		});
 	}
 	componentDidMount()
@@ -127,7 +127,6 @@ export default class Dashboard extends Component
     render()
     {
     	return(
-        	<Router>
 			<div className = "main">
 				<div className = "container-fluid heading">
 					<span className = "heading-title">
@@ -162,7 +161,6 @@ export default class Dashboard extends Component
 				{this.state.showAddUser}
 				{this.state.showCreateChannel}
 			</div>
-			</Router>
         );
 
     }

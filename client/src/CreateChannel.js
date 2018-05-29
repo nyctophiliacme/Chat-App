@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router';
 export default class CreateChannel extends Component
 {
 	constructor(props)
@@ -92,7 +91,7 @@ export default class CreateChannel extends Component
 				        </div>
 				        <button type="submit" className="btn btn-primary">Create</button>
 				        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				        <button className = "btn btn-primary" onClick = {this.handleBack} >Back</button>
+				        <button type="button" className = "btn btn-primary" onClick = {this.handleBack} >Back</button>
 			        </form>
 			        <br />
 			        <p className="text-danger">{this.state.error}</p>

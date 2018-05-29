@@ -321,3 +321,93 @@ app.post('/loadChannels', function(request, response)
 		}));
 	}
 });
+
+
+app.post('/addUser', function(request,response)
+{
+	response.setHeader('Content-Type', 'application/json');
+	console.log(request.body);
+	var email = request.body.email;
+	var channel = request.body.channel;
+
+	if(request.body.email && request.body.channel)
+	{
+		var query = {email : email};
+		User.find(query, function(err, result)
+		{
+			if(err)
+			{
+				response.send(JSON.stringify({
+					message: "Unable to connect to DB!",
+					extra: err
+				}));
+			}
+			else
+			{
+				if(typeof result !== 'undefined' && result.length > 0)
+				{
+					var queryCheck = {email: email, channelName: channel};
+
+					ChannelUser.find(queryCheck, function(err,result)
+					{
+						if(err)
+						{
+							response.send(JSON.stringify({
+								message: "Unable to connect to DB!",
+								extra: err
+							}));
+						}
+						else
+						{
+							console.log(result);
+							if(typeof result !== 'undefined' && result.length > 0)
+							{
+								response.send(JSON.stringify({
+									message: "User already in channel!"
+								}));
+							}
+							else
+							{
+								var channelUserData = {
+									_id: new ObjectID,
+									email: email,
+									channelName: channel
+								};
+								var channelUserObj = new ChannelUser(channelUserData);
+								channelUserObj.save(function(error,data)
+								{
+									if(error)
+									{
+										response.send(JSON.stringify({
+											message: "Unable to connect to DB!",
+											extra: error
+										}));
+									}
+									else
+									{
+										response.send(JSON.stringify({
+											message: "Successful",
+											extra: data
+										}));
+									}
+								});
+							}
+						}
+					});
+				}
+				else
+				{
+					response.send(JSON.stringify({
+						message: "User does not exist!"
+					}));
+				}
+			}
+		});
+	}
+	else
+	{
+		response.send(JSON.stringify({
+			message: 'Please enter the email-id'
+		}));
+	}
+});
