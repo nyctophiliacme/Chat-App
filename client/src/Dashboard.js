@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import './css/Dashboard.css';
 import plusButton from './images/plus-button.png';
-import plusButtonDark from './images/plus-button-dark.png';
 import Channel from './Channel.js';
 import AddUser from './AddUser.js';
 import CreateChannel from "./CreateChannel";
+import MessagesContainer from "./MessagesContainer";
 export default class Dashboard extends Component
 {
 	constructor(props) {
@@ -14,7 +14,8 @@ export default class Dashboard extends Component
 			currentChannel: '',
 			channelArray: [],
 			showAddUser: null,
-			showCreateChannel: null
+			showCreateChannel: null,
+			showMessagesContainer: null
 		};
 		this.logout = this.logout.bind(this);
 		this.changeChannel = this.changeChannel.bind(this);
@@ -23,14 +24,28 @@ export default class Dashboard extends Component
 		this.stateHelper = this.stateHelper.bind(this);
 		this.handleAddUser = this.handleAddUser.bind(this);
 		this.handleCreateChannel = this.handleCreateChannel.bind(this);
+		this.handleMessagesContainer = this.handleMessagesContainer.bind(this);
+		this.currentChannelDesc = null;
+		this.channelDescArray = [];
+		// this.var = "Hello World";
 		// console.log(this.props.user);
 	}
+	currentChannelDesc = null;
 	channelUtility()
 	{
 		var temp = [];
 		for(var i = 0; i < this.state.channelArray.length; i++)
 		{
-			var is_selected = this.state.currentChannel === this.state.channelArray[i].channelName;
+			var is_selected
+			if( this.state.currentChannel === this.state.channelArray[i].channelName)
+			{
+				is_selected = true; 
+				this.currentChannelDesc = this.channelDescArray[i].description;
+			}
+			else
+			{
+				is_selected = false;
+			}
 			// console.log(is_selected);
 			temp.push(
 				<Channel key = {i} 
@@ -43,6 +58,14 @@ export default class Dashboard extends Component
 			channels: temp
 		});
 	}
+	handleMessagesContainer()
+	{
+		this.setState({
+			showMessagesContainer: <MessagesContainer channel= {this.state.currentChannel}
+													  handleAddUser = {this.handleAddUser}
+													  description = {this.currentChannelDesc}/>
+		});
+	}
 	changeChannel(val)
 	{
 		// console.log(val);
@@ -51,7 +74,8 @@ export default class Dashboard extends Component
 			this.setState({
 				currentChannel: val
 			},
-			() => {this.channelUtility()});
+			() => {this.channelUtility();
+				   this.handleMessagesContainer();});
 		}
 	}
 	logout(e) {
@@ -79,10 +103,13 @@ export default class Dashboard extends Component
 			if(responseText.message === "Retrieved Channels")
 			{
 				// console.log(responseText.data);
+				// console.log(responseText.desc);
+				
 				// this.state.channelArray = responseText.data;
 				this.setState({
 					channelArray: responseText.data
 				})
+				this.channelDescArray = responseText.desc;
 				this.channelUtility();
 			}
 			else
@@ -103,7 +130,6 @@ export default class Dashboard extends Component
 	}
 	handleCreateChannel()
 	{
-		console.log("asdf");
 		this.setState(
 		{
 			showCreateChannel: (<CreateChannel user={this.props.user} 
@@ -113,7 +139,7 @@ export default class Dashboard extends Component
 	}
 	handleAddUser()
 	{
-		console.log("clicked");
+		// console.log(this.var);
 		this.setState({
 			showAddUser: (<AddUser channel={this.state.currentChannel}  
 								   stateHelper = {this.stateHelper}/>)
@@ -123,7 +149,8 @@ export default class Dashboard extends Component
 	{
 		this.fetchChannels();
 	}
-	
+	//*************************************************************************************************
+	//*************************************************************************************************
     render()
     {
     	return(
@@ -152,16 +179,12 @@ export default class Dashboard extends Component
 								</ul>
 							</div>
 						</div>
-						<div className = "messages-container col-sm-10">
-							{this.state.currentChannel}
-							<img src = {plusButtonDark} onClick={this.handleAddUser} className = "image-button float-right"  alt = "Add" />
-						</div>
+						{this.state.showMessagesContainer}
 					</div>
 				</div>  
 				{this.state.showAddUser}
 				{this.state.showCreateChannel}
 			</div>
         );
-
     }
 }

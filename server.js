@@ -301,10 +301,16 @@ app.post('/loadChannels', function(request, response)
 			if (err) throw err;
 			console.log(result);
 		    if (typeof result !== 'undefined' && result.length > 0) {
-			    response.send(JSON.stringify({
-			    	message: 'Retrieved Channels',
-			    	data: result
-			    }))
+				var channelDesc = new Array();
+		    	asyncLoop(0, result, channelDesc, function()
+				{
+					console.log(channelDesc);
+					response.send(JSON.stringify({
+				    	message: 'Retrieved Channels',
+				    	data: result,
+						desc: channelDesc	
+				    }));
+				});
 			}
 			else
 			{
@@ -321,6 +327,32 @@ app.post('/loadChannels', function(request, response)
 		}));
 	}
 });
+function asyncLoop(i, result, channelDesc, callback)
+{
+	if( i < result.length)
+	{
+		var constraintsDesc = {
+    		__v: false,
+    		_id: false,
+    		name: false
+    	};
+		var queryDesc = {name: result[i].channelName};
+    	Channel.find(queryDesc, constraintsDesc, function(err, resultDesc)
+    	{
+    		if(err) throw err;
+    		if(typeof resultDesc !== 'undefined' && resultDesc.length > 0)
+    		{
+    			console.log(resultDesc[0]);
+    			channelDesc.push(resultDesc[0]);
+    			asyncLoop(i+1, result, channelDesc, callback);
+    		}
+    	});
+	}
+	else
+	{
+		callback();
+	}
+}
 
 
 app.post('/addUser', function(request,response)

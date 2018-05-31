@@ -1,0 +1,62 @@
+.messages-container
+{
+	background-color: var(--light);
+	display: flex;
+	flex-flow: column;
+}
+.channel-info
+{
+	/*height: 8%;*/
+	/*background-color: var(--text-green);*/
+	flex: 0 1 62px;
+	color: var(--dark);
+	border-bottom: 1px solid #bdc3c7;
+}
+.channel-info-name
+{
+	font-weight: 600;
+	font-size: 1.1em;
+	padding-top: 10px;
+	display: inline-block;
+}
+.channel-info-image-div
+{
+	display: inline-block;
+	position: relative;
+	bottom: 2px;
+}
+.channel-info-image
+{
+	cursor: pointer;
+	height: 18px;
+	width: 18px;
+}
+.channel-info-desc
+{
+	font-size: 0.95em;
+	display: inline-block;
+	padding-bottom: 2px;
+}
+.messages-box
+{
+	/*max-height: 100%;*/
+	flex: 1 1 auto;
+	/*background-color: var(--text-blue);*/
+	overflow-y: auto;
+	color: var(--dark);
+	border-bottom: 1px solid #bdc3c7;
+	/*margin-bottom: 0;*/
+}
+
+.send-box
+{
+	flex: 0 1 60px;
+	/*background-color: var(--text-red);*/
+	/*height: 5%;*/
+	/*padding: 0.5% 0 0.5% 0;*/
+	padding: 11px 0 11px 0;
+}
+.send-box-inner
+{
+	/*height: 4%;*/
+}

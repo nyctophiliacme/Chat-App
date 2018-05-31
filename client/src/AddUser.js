@@ -71,7 +71,7 @@ export default class AddUser extends Component
 			 <div>
 			 <div className="container-fluid add-box">
 		          <div className="jumbotron">
-		              <h2>Enter the email-id of the use to be added</h2>
+		              <h2>Enter the email-id of the user to be added</h2>
 		              <form onSubmit={this.handleSubmit}>
 		                <div className="form-group">
 		                    <label>Email address:</label>

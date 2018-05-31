@@ -79,10 +79,6 @@
 	font-family: OpenSansBold;
 	height: 40px;
 }
-.messages-container
-{
-	background-color: var(--light);
-}
 .image-button
 {
 	height: 20px;
