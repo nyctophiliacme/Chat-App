@@ -47,7 +47,7 @@ var userSchema = mongoose.Schema({
 var channelSchema = mongoose.Schema(
 {
     _id: mongoose.Schema.Types.ObjectId,
-    name: String,
+    channelName: String,
     description: String
 },
 {
@@ -63,9 +63,21 @@ var channelUserSchema = mongoose.Schema({
 	collection: 'channelUsers'
 });
 
+var messageSchema = mongoose.Schema({
+	_id: mongoose.Schema.Types.ObjectId,
+	email: String,
+	name: String,
+	channelName: String,
+	message: String,
+	date: { type : Date, default: Date.now }
+},
+{
+	collection: 'messages'
+});
 var User = mongoose.model('users', userSchema);
 var Channel = mongoose.model('channels', channelSchema);
 var ChannelUser = mongoose.model('channelUsers', channelUserSchema);
+var Message = mongoose.model('messages', messageSchema);
 //Listen to the required Port
 app.listen(3005, function () {
 	console.log('Server is running. Point your browser to: http://localhost:3005');
@@ -221,10 +233,10 @@ app.post('/createChannel', function(request, response)
 	{
 		var channelData = {
 			_id: new ObjectID(),
-			name: channelName,
+			channelName: channelName,
 			description: description
 		}
-		var query = {name : channelName};
+		var query = {channelName : channelName};
 		Channel.find(query, function(err, result)
 		{
 			if (err) throw err;
@@ -334,9 +346,9 @@ function asyncLoop(i, result, channelDesc, callback)
 		var constraintsDesc = {
     		__v: false,
     		_id: false,
-    		name: false
+    		channelName: false
     	};
-		var queryDesc = {name: result[i].channelName};
+		var queryDesc = {channelName: result[i].channelName};
     	Channel.find(queryDesc, constraintsDesc, function(err, resultDesc)
     	{
     		if(err) throw err;
@@ -355,14 +367,14 @@ function asyncLoop(i, result, channelDesc, callback)
 }
 
 
-app.post('/addUser', function(request,response)
+app.post('/addUser', function(request, response)
 {
 	response.setHeader('Content-Type', 'application/json');
 	console.log(request.body);
 	var email = request.body.email;
-	var channel = request.body.channel;
+	var channelName = request.body.channelName;
 
-	if(request.body.email && request.body.channel)
+	if(request.body.email && request.body.channelName)
 	{
 		var query = {email : email};
 		User.find(query, function(err, result)
@@ -378,7 +390,7 @@ app.post('/addUser', function(request,response)
 			{
 				if(typeof result !== 'undefined' && result.length > 0)
 				{
-					var queryCheck = {email: email, channelName: channel};
+					var queryCheck = {email: email, channelName: channelName};
 
 					ChannelUser.find(queryCheck, function(err,result)
 					{
@@ -403,7 +415,7 @@ app.post('/addUser', function(request,response)
 								var channelUserData = {
 									_id: new ObjectID,
 									email: email,
-									channelName: channel
+									channelName: channelName
 								};
 								var channelUserObj = new ChannelUser(channelUserData);
 								channelUserObj.save(function(error,data)
@@ -441,5 +453,76 @@ app.post('/addUser', function(request,response)
 		response.send(JSON.stringify({
 			message: 'Please enter the email-id'
 		}));
+	}
+});
+
+app.post('/postMessage', function(request, response)
+{
+	response.setHeader('Content-Type', 'application/json');
+
+	console.log(request.body);
+	// console.log(Date.now());
+
+	if(request.body.email && request.body.name && request.body.channelName && request.body.message)
+	{
+		var email = request.body.email;
+		var message = request.body.message;
+		var channelName = request.body.channelName;
+		var name = request.body.name;
+		var messageData = {
+			_id: new ObjectID(),
+			email: email,
+			name: name,
+			channelName: channelName,
+			message: message
+		};
+		var messageObj = new Message(messageData);
+		messageObj.save(function(error, data){
+			if(error)
+			{
+				response.send(JSON.stringify({
+					message: "Unable to save message",
+					extra: error
+				}));
+			}
+			else
+			{
+				response.send(JSON.stringify({
+					message: "Successful",
+					extra: data
+				}));
+			}
+		});
+	}
+});
+
+app.get('/getMessage', function(request, response)
+{
+	response.setHeader('Content-Type', 'application/json');
+	console.log(request.query.channelName);
+	if(request.query.channelName)
+	{
+		var channelName = request.query.channelName;
+		var constraints = {
+			__v: false,
+			_id: false,
+			channelName: false,
+			email: false
+		}
+		var query = {channelName: channelName};
+		Message.find(query, constraints, function(err, result)
+		{
+			if(err)
+			{
+				response.send()
+			}
+			else if(typeof result !== 'undefined' && result.length > 0)
+			{
+				response.send(JSON.stringify({
+					message: "Chat sent",
+					data: result
+				}))
+			}
+		});
 	}
 });

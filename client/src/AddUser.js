@@ -29,7 +29,7 @@ export default class AddUser extends Component
 			credentials: 'same-origin',
 			body: JSON.stringify({
 				email: this.state.email, 
-				channel: this.props.channel
+				channelName: this.props.channel
 			})
 		})
 		.then((response) => response.text())
@@ -47,9 +47,9 @@ export default class AddUser extends Component
 			else
 	        {
 	          this.setState({
-	          		successMessage: '',
-	                error: responseText.message
-	              });
+          		successMessage: '',
+                error: responseText.message
+              });
 	        }
 		})
 		.catch((error) => {

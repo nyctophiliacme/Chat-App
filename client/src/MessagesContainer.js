@@ -11,14 +11,76 @@ export default class MessagesContainer extends Component
 		}
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleMessageChange = this.handleMessageChange.bind(this);
+		this.loadMessages = this.loadMessages.bind(this);
+	}
+	loadMessages()
+	{
+		console.log("Called");
+		const encodedValue = encodeURIComponent(this.props.channel);
+		fetch(`/getMessage?channelName=${encodedValue}`,
+		{
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'GET',
+			credential: 'same-origin'
+		})
+		.then((response) => response.text())
+		.then((responseText) => {
+			console.log(responseText);
+		})
+		.catch((error) => {
+			console.error(error);
+		});
+	}
+	componentDidMount()
+	{
+		this.loadMessages();
 	}
 	handleSubmit(e)
 	{
 		e.preventDefault();
-		console.log(this.state.message);
-		this.setState({
-			message: ''
-		});
+		this.loadMessages();
+		if(this.state.message !== '')
+		{
+			console.log(this.state.message);
+			fetch('/postMessage',
+			{
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'POST',
+				credential: 'same-origin',
+				body: JSON.stringify({
+					email: this.props.email,
+					name: this.props.name,
+					message: this.state.message,
+					channelName: this.props.channel
+				})
+			})
+			.then((response) => response.text())
+			.then((responseText) => {
+				if(responseText.message === "Successful")
+				{
+					this.setState({
+						message: ''
+					});
+				}
+				else
+				{
+					alert("Can not send message");
+					console.log(responseText);
+					console.log(responseText.message);
+					console.log(responseText);
+				}
+			})
+			.catch((error) => {
+				console.error(error);
+			});
+		}
+		
 	}
 	handleMessageChange(e)
 	{
@@ -55,7 +117,7 @@ export default class MessagesContainer extends Component
 				<div className = "send-box">
 				<form onSubmit = {this.handleSubmit}>
 					<div className ="input-group send-box-inner">
-					   <input type="text" className="form-control" value = {this.state.message} onChange = {this.handleMessageChange}/>
+					   <input type="text" placeholder = "Type your message here" className="form-control" value = {this.state.message} onChange = {this.handleMessageChange}/>
 					   &nbsp;
 					   <span className="input-group-btn">
 					        <button className="btn btn-primary" type="submit">

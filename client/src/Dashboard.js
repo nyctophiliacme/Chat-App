@@ -63,7 +63,9 @@ export default class Dashboard extends Component
 		this.setState({
 			showMessagesContainer: <MessagesContainer channel= {this.state.currentChannel}
 													  handleAddUser = {this.handleAddUser}
-													  description = {this.currentChannelDesc}/>
+													  description = {this.currentChannelDesc}
+													  email = {this.props.user.email}
+													  name = {this.props.user.name}/>
 		});
 	}
 	changeChannel(val)
