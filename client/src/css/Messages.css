@@ -1,3 +1,14 @@
+@font-face 
+{ 
+    font-family: OpenSans; 
+    src: url(fonts/OpenSans-Regular.ttf);
+}
+@font-face 
+{ 
+    font-family: OpenSansBold; 
+    src: url(fonts/OpenSans-Bold.ttf);
+}
+
 .messages-container
 {
 	background-color: var(--light);
@@ -11,6 +22,7 @@
 	flex: 0 1 62px;
 	color: var(--dark);
 	border-bottom: 1px solid #bdc3c7;
+	margin-bottom: 10px;
 }
 .channel-info-name
 {
@@ -42,12 +54,23 @@
 	/*max-height: 100%;*/
 	flex: 1 1 auto;
 	/*background-color: var(--text-blue);*/
-	overflow-y: auto;
+	flex-flow: column;
+	display: flex;
+	
 	color: var(--dark);
-	border-bottom: 1px solid #bdc3c7;
+	
+	flex-direction: column;
 	/*margin-bottom: 0;*/
 }
-
+.message-box-spacer
+{
+	flex: 1 1 auto;
+}
+.message-box-main
+{
+	overflow-y: auto;
+	flex: 0 1 auto;
+}
 .send-box
 {
 	flex: 0 1 60px;
@@ -55,8 +78,48 @@
 	/*height: 5%;*/
 	/*padding: 0.5% 0 0.5% 0;*/
 	padding: 11px 0 11px 0;
+	border-top: 1px solid #bdc3c7;
+	margin-top: 10px;
 }
 .send-box-inner
 {
 	/*height: 4%;*/
+}
+.message-element
+{
+	margin: 0;
+	padding: 0;
+	font-family: OpenSans;
+}
+.message-element-with-data
+{
+	margin-top: 10px;
+}
+.message-element:hover
+{
+	background-color: #f5f6fa;
+}
+.message-element-name
+{
+	font-family: OpenSansBold;
+}
+.message-element-time
+{
+	/*font-family: OpenSansBold;*/
+	font-weight: 100;
+	font-size: 0.9em;
+	color: #747d8c;
+}
+.message-date
+{
+	font-family: OpenSansBold;
+	text-align: center;
+	border-bottom: 1px solid #bdc3c7;
+	line-height: 0.1em;
+	margin-top: 10px;
+}
+.message-date span
+{
+	background: var(--light); 
+    padding: 0 10px;
 }

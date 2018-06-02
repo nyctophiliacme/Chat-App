@@ -60,6 +60,8 @@ export default class Dashboard extends Component
 	}
 	handleMessagesContainer()
 	{
+		console.log("Called handleMessagesContainer");
+		console.log(this.state.currentChannel);
 		this.setState({
 			showMessagesContainer: <MessagesContainer channel= {this.state.currentChannel}
 													  handleAddUser = {this.handleAddUser}

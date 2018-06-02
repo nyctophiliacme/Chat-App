@@ -506,22 +506,23 @@ app.get('/getMessage', function(request, response)
 		var constraints = {
 			__v: false,
 			_id: false,
-			channelName: false,
-			email: false
+			channelName: false
 		}
 		var query = {channelName: channelName};
-		Message.find(query, constraints, function(err, result)
+		Message.find(query, constraints).sort('date').exec(function(err, result)
 		{
 			if(err)
 			{
-				response.send()
+				response.send(JSON.stringify({
+					message: "Error in fetching chat"
+				}));
 			}
 			else if(typeof result !== 'undefined' && result.length > 0)
 			{
 				response.send(JSON.stringify({
-					message: "Chat sent",
+					message: "Chat Received",
 					data: result
-				}))
+				}));
 			}
 		});
 	}
