@@ -489,7 +489,7 @@ app.get('/getMessage', function(request, response)
 					message: "Error in fetching chat"
 				}));
 			}
-			else if(typeof result !== 'undefined' && result.length > 0)
+			else if(typeof result !== 'undefined' && result.length >= 0)
 			{
 				response.send(JSON.stringify({
 					message: "Chat Received",

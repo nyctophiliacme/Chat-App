@@ -123,3 +123,7 @@
 	background: var(--light); 
     padding: 0 10px;
 }
+
+#text-box:focus { 
+    border: none;
+}
