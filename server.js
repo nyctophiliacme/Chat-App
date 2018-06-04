@@ -1,6 +1,8 @@
 //for express
 const express = require('express');
 const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 
 //Body Parser Setup
 const bodyParser = require('body-parser');
@@ -79,14 +81,14 @@ var Channel = mongoose.model('channels', channelSchema);
 var ChannelUser = mongoose.model('channelUsers', channelUserSchema);
 var Message = mongoose.model('messages', messageSchema);
 //Listen to the required Port
-app.listen(3005, function () {
+http.listen(3005, function () {
 	console.log('Server is running. Point your browser to: http://localhost:3005');
 });
 
 app.get('/checkLogin', function(request, response)
 {
-	console.log(request.session.email);
-	console.log(request.session);
+	// console.log(request.session.email);
+	// console.log(request.session);
 	if(!request.session.email)
 	{
 		response.send(JSON.stringify({
@@ -129,7 +131,7 @@ app.post('/signup', function(request, response)
 	User.find(query, function(err, result)
 	{
 		if (err) throw err;
-		console.log(result);
+		// console.log(result);
 	    if (typeof result !== 'undefined' && result.length > 0) {
 	    	response.send(JSON.stringify({
 				message: 'User exists'
@@ -162,7 +164,7 @@ app.post('/signup', function(request, response)
 app.post('/login', function(request, response)
 {
 	response.setHeader('Content-Type', 'application/json');
-	console.log(request.body.email);
+	// console.log(request.body.email);
 	// console.log(request);
 	var email = request.body.email;
 	var password = request.body.password;
@@ -184,15 +186,15 @@ app.post('/login', function(request, response)
 	User.find(query, function(err, result)
 	{
 		if (err) throw err;
-		console.log(result);
+		// console.log(result);
 	    if (typeof result !== 'undefined' && result.length > 0) {
 		    // console.log("User Exists");
-		    console.log(result[0].password);
-		    console.log(result);
+		    // console.log(result[0].password);
+		    // console.log(result);
 		    if(result[0].password == password)
 		    {
 		    	save_session(request, email);
-		    	console.log(request.session);
+		    	// console.log(request.session);
 		    	response.send(JSON.stringify({
 		    		email: email,
 		    		name: result[0].name,
@@ -217,14 +219,14 @@ app.post('/login', function(request, response)
 var save_session = function(request, email)
 {
 	request.session.email = email;
-	console.log(request.session);
-	console.log(request.session.email);
+	// console.log(request.session);
+	// console.log(request.session.email);
 }
 
 app.post('/createChannel', function(request, response)
 {
 	response.setHeader('Content-Type', 'application/json');
-	console.log(request.body);
+	// console.log(request.body);
 	var email = request.body.email;
 	var channelName = request.body.channelName;
 	var description = request.body.description;
@@ -311,12 +313,12 @@ app.post('/loadChannels', function(request, response)
 		ChannelUser.find(query, constraints, function(err, result)
 		{
 			if (err) throw err;
-			console.log(result);
+			// console.log(result);
 		    if (typeof result !== 'undefined' && result.length > 0) {
 				var channelDesc = new Array();
 		    	asyncLoop(0, result, channelDesc, function()
 				{
-					console.log(channelDesc);
+					// console.log(channelDesc);
 					response.send(JSON.stringify({
 				    	message: 'Retrieved Channels',
 				    	data: result,
@@ -354,7 +356,7 @@ function asyncLoop(i, result, channelDesc, callback)
     		if(err) throw err;
     		if(typeof resultDesc !== 'undefined' && resultDesc.length > 0)
     		{
-    			console.log(resultDesc[0]);
+    			// console.log(resultDesc[0]);
     			channelDesc.push(resultDesc[0]);
     			asyncLoop(i+1, result, channelDesc, callback);
     		}
@@ -370,7 +372,7 @@ function asyncLoop(i, result, channelDesc, callback)
 app.post('/addUser', function(request, response)
 {
 	response.setHeader('Content-Type', 'application/json');
-	console.log(request.body);
+	// console.log(request.body);
 	var email = request.body.email;
 	var channelName = request.body.channelName;
 
@@ -403,7 +405,7 @@ app.post('/addUser', function(request, response)
 						}
 						else
 						{
-							console.log(result);
+							// console.log(result);
 							if(typeof result !== 'undefined' && result.length > 0)
 							{
 								response.send(JSON.stringify({
@@ -460,46 +462,16 @@ app.post('/postMessage', function(request, response)
 {
 	response.setHeader('Content-Type', 'application/json');
 
-	console.log(request.body);
+	// console.log(request.body);
 	// console.log(Date.now());
 
-	if(request.body.email && request.body.name && request.body.channelName && request.body.message)
-	{
-		var email = request.body.email;
-		var message = request.body.message;
-		var channelName = request.body.channelName;
-		var name = request.body.name;
-		var messageData = {
-			_id: new ObjectID(),
-			email: email,
-			name: name,
-			channelName: channelName,
-			message: message
-		};
-		var messageObj = new Message(messageData);
-		messageObj.save(function(error, data){
-			if(error)
-			{
-				response.send(JSON.stringify({
-					message: "Unable to save message",
-					extra: error
-				}));
-			}
-			else
-			{
-				response.send(JSON.stringify({
-					message: "Successful",
-					extra: data
-				}));
-			}
-		});
-	}
+	
 });
 
 app.get('/getMessage', function(request, response)
 {
 	response.setHeader('Content-Type', 'application/json');
-	console.log(request.query.channelName);
+	// console.log(request.query.channelName);
 	if(request.query.channelName)
 	{
 		var channelName = request.query.channelName;
@@ -526,4 +498,62 @@ app.get('/getMessage', function(request, response)
 			}
 		});
 	}
+});
+
+io.sockets.on('connection', function(socket){
+	// console.log("A user has connected");
+
+	// socket.on('chat-message', function(msg){
+	// 	console.log("Message --> " + msg);
+	// 	io.emit('message', msg);
+	// });
+
+	// socket.on('disconnect', function(){
+	// 	console.log("User disconnected");
+	// });
+	socket.on('subscribe', function(room){
+		console.log("Joining Room", room);
+		socket.join(room);
+	});
+
+	socket.on('unsubscribe', function(room){
+		console.log("Leaving room", room);
+		socket.leave(room);
+	});
+
+	socket.on('send', function(data){
+		if(data.email && data.name && data.channelName && data.message)
+		{
+			var email = data.email;
+			var message = data.message;
+			var channelName = data.channelName;
+			var name = data.name;
+			var date = Date.now();
+			var messageData = {
+				_id: new ObjectID(),
+				email: email,
+				name: name,
+				channelName: channelName,
+				message: message,
+				date: date
+			};
+			data.date = date;
+			var messageObj = new Message(messageData);
+			messageObj.save(function(error, res){
+				if(error)
+				{
+					console.log("Error saving");
+					data.extra = "Error";
+					io.sockets.in(data.channelName).emit('message', data);
+				}
+				else
+				{
+					console.log("Sending Message");
+					console.log(data);
+					io.sockets.in(data.channelName).emit('message', data);
+				}
+			});
+		}
+		
+	})
 });

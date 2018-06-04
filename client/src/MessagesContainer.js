@@ -1,11 +1,18 @@
 import React, { Component } from 'react';	
 import plusButtonDark from './images/plus-button-dark.png';
 import './css/Messages.css';
+// import openSocket from 'socket.io-client';
+// const socket = openSocket('http://localhost:3005');
+const io = require('socket.io-client');  
+const socket = io.connect('http://localhost:3000');
+socket.on('message', function(data){
+		console.log(data);
+	});
 export default class MessagesContainer extends Component
 {
 	constructor(props)
 	{
-		console.log("Called everytime");
+		// console.log("Called everytime");
 		super(props);
 		this.state = {
 			message: '',
@@ -14,6 +21,9 @@ export default class MessagesContainer extends Component
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleMessageChange = this.handleMessageChange.bind(this);
 		this.loadMessages = this.loadMessages.bind(this);
+		this.socketEnterRoom = this.socketEnterRoom.bind(this);
+		this.socketLeaveRoom = this.socketLeaveRoom.bind(this);
+		this.globalCounter = 0;
 	}
 	loadMessages()
 	{
@@ -74,24 +84,35 @@ export default class MessagesContainer extends Component
 					</div>);
 					prevEmail = responseText.data[i].email;
 				}
-				
 			}
+			this.globalCounter = i;
 			this.setState({
 				displayMessages: temp
 			});
 			var element = document.getElementById("message-box-id");
     		element.scrollTop = element.scrollHeight;
-			console.log(responseText);
+			// console.log(responseText);
 		})
 		.catch((error) => {
 			console.error(error);
 		});
 		
 	}
+	socketEnterRoom()
+	{
+		socket.emit('subscribe', this.props.channel);
+	}
+	socketLeaveRoom(x)
+	{
+		socket.emit('unsubscribe', x);
+	}
 	componentDidMount()
 	{
-		console.log("In componentDidMount");
+		// console.log("In componentDidMount");
+
 		this.loadMessages();
+		this.socketEnterRoom();
+		
 	}
 	componentDidUpdate(prevProps)
 	{
@@ -100,8 +121,10 @@ export default class MessagesContainer extends Component
 			this.setState({
 				displayMessages: ''
 			});
-			console.log("In componentDidUpdate");
+			// console.log("In componentDidUpdate");
 			this.loadMessages();
+			this.socketLeaveRoom(prevProps.channel);
+			this.socketEnterRoom();
 		}
 	}
 	handleSubmit(e)
@@ -109,45 +132,16 @@ export default class MessagesContainer extends Component
 		e.preventDefault();
 		if(this.state.message !== '')
 		{
-			console.log(this.state.message);
-			fetch('/postMessage',
-			{
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				method: 'POST',
-				credential: 'same-origin',
-				body: JSON.stringify({
-					email: this.props.email,
-					name: this.props.name,
-					message: this.state.message,
-					channelName: this.props.channel
-				})
-			})
-			.then((response) => response.text())
-			.then((responseText) => {
-				responseText = JSON.parse(responseText);
-				if(responseText.message === "Successful")
-				{
-					this.setState({
-						message: ''
-					});
-					this.loadMessages();
-				}
-				else
-				{
-					alert("Can not send message");
-					
-					console.log(responseText.message);
-					console.log(responseText);
-				}
-			})
-			.catch((error) => {
-				console.error(error);
+			socket.emit('send', { 
+				channelName: this.props.channel, 
+				message: this.state.message,
+				name: this.props.name,
+				email: this.props.email 
+			});
+			this.setState({
+				message: ''
 			});
 		}
-		
 	}
 	handleMessageChange(e)
 	{
