@@ -1,4 +1,4 @@
-# Chat-App
+# Chat-Hub
 A chat application similar to slack.
 
 ### Screenshots
