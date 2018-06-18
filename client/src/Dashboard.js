@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './css/Dashboard.css';
 import plusButton from './images/plus-button.png';
 import Channel from './Channel.js';
+import Buddy from './Buddy.js';
 import AddUser from './AddUser.js';
 import CreateChannel from "./CreateChannel";
 import MessagesContainer from "./MessagesContainer";
@@ -12,38 +13,41 @@ export default class Dashboard extends Component
 		super(props);
 		this.state = {
 			channels: [],
-			currentChannel: '',
+			currentChannelOrBuddy: '',
 			channelArray: [],
+			buddyData: [],
 			showAddUser: null,
 			showCreateChannel: null,
 			showMessagesContainer: null,
 			buddies: []
 		};
 		this.logout = this.logout.bind(this);
+		this.channelOrBuddy = null;
 		this.changeChannel = this.changeChannel.bind(this);
-		this.channelUtility = this.channelUtility.bind(this);
+		this.channelBuddyUtility = this.channelBuddyUtility.bind(this);
 		this.fetchChannels = this.fetchChannels.bind(this);
+		this.fetchBuddies = this.fetchBuddies.bind(this);
 		this.stateHelper = this.stateHelper.bind(this);
 		this.handleAddUser = this.handleAddUser.bind(this);
 		this.handleCreateChannel = this.handleCreateChannel.bind(this);
 		this.handleMessagesContainer = this.handleMessagesContainer.bind(this);
 		this.handleAddBuddy = this.handleAddBuddy.bind(this);
-		this.currentChannelDesc = null;
+		this.currentChannelOrBuddyDesc = null;
 		this.channelDescArray = [];
 		// this.var = "Hello World";
 		// console.log(this.props.user);
 	}
-	currentChannelDesc = null;
-	channelUtility()
+	currentChannelOrBuddyDesc = null;
+	channelBuddyUtility()
 	{
-		var temp = [];
-		for(var i = 0; i < this.state.channelArray.length; i++)
+		var temp = [], i, is_selected;
+		for(i = 0; i < this.state.channelArray.length; i++)
 		{
-			var is_selected
-			if( this.state.currentChannel === this.state.channelArray[i].channelName)
+			if( this.state.currentChannelOrBuddy === this.state.channelArray[i].channelName)
 			{
 				is_selected = true; 
-				this.currentChannelDesc = this.channelDescArray[i].description;
+				this.currentChannelOrBuddyDesc = this.channelDescArray[i].description;
+				this.channelOrBuddy = 'channel';
 			}
 			else
 			{
@@ -56,32 +60,75 @@ export default class Dashboard extends Component
 				isSelected = {is_selected}
 				value = {this.state.channelArray[i].channelName} />);
 		}
-		// console.log(temp);
 		this.setState({
 			channels: temp
+		});
+		temp = [];
+		for(i = 0; i < this.state.buddyData.length; i++)
+		{
+			if( this.state.currentChannelOrBuddy === this.state.buddyData[i].email)
+			{
+				is_selected = true; 
+				this.currentChannelOrBuddyDesc = 'You are friends with '+this.state.buddyData[i].name+' ('+this.state.buddyData[i].email+')';
+				this.channelOrBuddy = 'buddy';
+				this.currentBuddy = this.state.buddyData[i];
+			}
+			else
+			{
+				is_selected = false;
+			}
+			// console.log(is_selected);
+			// console.log(this.state.buddyData[i].name);
+			temp.push(
+				<Buddy key = {i} 
+				onClick = {this.changeChannel.bind(this)} 
+				isSelected = {is_selected}
+				name = {this.state.buddyData[i].name}
+				email = {this.state.buddyData[i].email} />);
+		}
+		// console.log(temp);
+		this.setState({
+			buddies: temp
 		});
 	}
 	handleMessagesContainer()
 	{
 		// console.log("Called handleMessagesContainer");
-		// console.log(this.state.currentChannel);
-		this.setState({
-			showMessagesContainer: <MessagesContainer channel= {this.state.currentChannel}
+		// console.log(this.state.currentChannelOrBuddy);
+		if(this.channelOrBuddy === 'buddy')
+		{
+			this.setState({
+			showMessagesContainer: <MessagesContainer channel = {this.state.currentChannelOrBuddy}
+												  description = {this.currentChannelOrBuddyDesc}
+												  email = {this.props.user.email}
+												  name = {this.props.user.name}
+												  channelOrBuddy = {this.channelOrBuddy}
+												  currentBuddy = {this.currentBuddy} />
+			});
+		}
+		else if(this.channelOrBuddy === 'channel')
+		{
+			this.setState({
+			showMessagesContainer: <MessagesContainer channel = {this.state.currentChannelOrBuddy}
 													  handleAddUser = {this.handleAddUser}
-													  description = {this.currentChannelDesc}
+													  description = {this.currentChannelOrBuddyDesc}
 													  email = {this.props.user.email}
-													  name = {this.props.user.name}/>
-		});
+													  name = {this.props.user.name}
+													  channelOrBuddy = {this.channelOrBuddy} />
+			});
+		}
 	}
 	changeChannel(val)
 	{
 		// console.log(val);
-		if(this.state.currentChannel !== val)
+		if(this.state.currentChannelOrBuddy !== val)
 		{
+			this.currentChannelOrBuddyDesc = '';
+			this.currentBuddy = '';
 			this.setState({
-				currentChannel: val
+				currentChannelOrBuddy: val
 			},
-			() => {this.channelUtility();
+			() => {this.channelBuddyUtility();
 				   this.handleMessagesContainer();});
 		}
 	}
@@ -117,7 +164,7 @@ export default class Dashboard extends Component
 					channelArray: responseText.data
 				})
 				this.channelDescArray = responseText.desc;
-				this.channelUtility();
+				this.channelBuddyUtility();
 			}
 			else
 	        {
@@ -127,6 +174,45 @@ export default class Dashboard extends Component
 		.catch((error) => {
 			console.log(error);
 		});
+	}
+	fetchBuddies()
+	{
+		fetch('/loadBuddies',
+		{
+			headers: 
+			{
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'same-origin',
+			body: JSON.stringify({
+				email: this.props.user.email
+			})
+		})
+		.then((response) => response.text())
+		.then((responseText) => {
+			responseText = JSON.parse(responseText);
+			console.log(responseText);
+			if(responseText.message === "Retrieved Buddies")
+			{
+				this.setState({
+					buddyData: responseText.data
+				});
+				console.log(this.state.buddyData);
+				this.channelBuddyUtility();
+			}
+			else
+	        {
+	          	console.log(responseText.message);
+	        }
+		})
+		.catch((error) => 
+		{
+			console.log("Error in fetching Buddies");
+			console.log(error);
+		})
+
 	}
 	stateHelper()
 	{
@@ -156,7 +242,7 @@ export default class Dashboard extends Component
 	{
 		// console.log(this.var);
 		this.setState({
-			showAddUser: (<AddUser channel={this.state.currentChannel}  
+			showAddUser: (<AddUser channel={this.state.currentChannelOrBuddy}  
 								   stateHelper = {this.stateHelper}
 								   user = {this.props.user}/>)
 		});
@@ -164,6 +250,7 @@ export default class Dashboard extends Component
 	componentDidMount()
 	{
 		this.fetchChannels();
+		this.fetchBuddies();
 	}
 	//*************************************************************************************************
 	//*************************************************************************************************

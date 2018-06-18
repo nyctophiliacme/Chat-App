@@ -10,11 +10,11 @@ export default class MessagesContainer extends Component
 {
 	constructor(props)
 	{
-		// console.log("Called everytime");
 		super(props);
 		this.state = {
 			message: '',
-			displayMessages: ''
+			displayMessages: '',
+			channelInfo: ''
 		}
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleMessageChange = this.handleMessageChange.bind(this);
@@ -129,7 +129,7 @@ export default class MessagesContainer extends Component
 	componentDidMount()
 	{
 		// console.log("In componentDidMount");
-
+		this.handleChannelInfo();
 		this.loadMessages();
 		this.socketEnterRoom();
 		this.handleSocket();
@@ -139,6 +139,46 @@ export default class MessagesContainer extends Component
 		this.socketLeaveRoom(this.props.channel);
 	}
 
+	handleChannelInfo()
+	{
+		if(this.props.channelOrBuddy === 'buddy')
+		{
+			this.setState({
+				channelInfo : 
+					<div className = "channel-info">
+						<span className = "channel-info-name">
+							{this.props.currentBuddy.name}
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						</span> 
+						<br/>
+						<span className = "channel-info-desc">
+							{this.props.description}
+						</span>
+					</div>
+				});
+		}
+		
+		else if(this.props.channelOrBuddy === 'channel')
+		{
+			this.setState({ 
+				channelInfo: 
+					<div className = "channel-info">
+						<span className = "channel-info-name">
+							#{this.props.channel}
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						</span> 
+						<div className="channel-info-image-div">
+				       		<img src = {plusButtonDark} onClick={this.props.handleAddUser} className = "channel-info-image" alt = "Add" />
+					    </div>
+						
+						<br/>
+						<span className = "channel-info-desc">
+							{this.props.description}
+						</span>
+					</div>
+				});
+		}
+	}
 	handleSocketData(data)
 	{
 		var date = new Date(data.date);
@@ -215,12 +255,14 @@ export default class MessagesContainer extends Component
 	}
 	componentDidUpdate(prevProps)
 	{
+		// console.log(this.props);
 		if(prevProps.channel !== this.props.channel)
 		{
 			this.setState({
 				displayMessages: ''
 			});
 			// console.log("In componentDidUpdate");
+			this.handleChannelInfo();
 			this.loadMessages();
 			this.socketLeaveRoom(prevProps.channel);
 			this.socketEnterRoom();
@@ -252,20 +294,7 @@ export default class MessagesContainer extends Component
 	{
 		return(
 			<div className = "messages-container col-sm-10">
-				<div className = "channel-info">
-					<span className = "channel-info-name">
-						#{this.props.channel}
-						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					</span> 
-					<div className="channel-info-image-div">
-			       		<img src = {plusButtonDark} onClick={this.props.handleAddUser} className = "channel-info-image" alt = "Add" />
-				    </div>
-					
-					<br/>
-					<span className = "channel-info-desc">
-						{this.props.description}
-					</span>
-					</div>
+				{this.state.channelInfo}
 				<div className = "messages-box">
 					<div className = "message-box-spacer">
 					</div>
