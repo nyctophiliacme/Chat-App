@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './css/Add.css';
-export default class AddUser extends Component 
+export default class AddBuddy extends Component 
 {
 	constructor(props){
 		super(props);
@@ -12,64 +12,52 @@ export default class AddUser extends Component
 		this.handleBack = this.handleBack.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleEmailChange = this.handleEmailChange.bind(this);
+		console.log(this.props);
 	}
 	handleSubmit(e)
 	{
 		e.preventDefault();
-		if(this.state.email === this.props.user.email)
+		
+		// 
+		fetch('/addBuddy',
 		{
-			this.setState({
-          		successMessage: '',
-                error: 'Don\'t enter your own email id'
-              });
-		}
-		else if(this.state.email === '')
-		{
-			this.setState({
-          		successMessage: '',
-                error: 'Email id can\'t be left blank'
-              });
-		}
-		else 
-		{
-			fetch('/addUser',
+			headers:
 			{
-				headers:
-				{
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				method: 'POST',
-				credentials: 'same-origin',
-				body: JSON.stringify({
-					email: this.state.email, 
-					channelName: this.props.channel
-				})
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'same-origin',
+			body: JSON.stringify({
+				email1: this.props.user.email,
+				email2: this.state.email,
+				name1: this.props.user.name 
 			})
-			.then((response) => response.text())
-			.then((responseText) => {
-				responseText = JSON.parse(responseText);
-				console.log(responseText);
-				if(responseText.message === "Successful")
-				{
-					this.setState({
-		                error: '',
-		                email: '',
-		                successMessage: "Successfully added "+this.state.email+" to "+this.props.channel+" Channel"
-		            });
-				}
-				else
-		        {
-		          this.setState({
-	          		successMessage: '',
-	                error: responseText.message
-	              });
-		        }
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-		}
+		})
+		.then((response) => response.text())
+		.then((responseText) => {
+			responseText = JSON.parse(responseText);
+			console.log(responseText);
+			if(responseText.message === "Successful")
+			{
+				this.setState({
+	                error: '',
+	                email: '',
+	                successMessage: "Successfully added "+responseText.buddyName+" as your buddy"
+	            });
+			}
+			else
+	        {
+	          this.setState({
+          		successMessage: '',
+          		email: '',
+                error: responseText.message
+              });
+	        }
+		})
+		.catch((error) => {
+			console.log(error);
+		});
 	}
 	handleEmailChange(e) {
 		this.setState({
@@ -86,7 +74,7 @@ export default class AddUser extends Component
 			 <div>
 			 <div className="container-fluid add-box">
 		          <div className="jumbotron">
-		              <h2>Enter the email-id of the user to be added</h2>
+		              <h2>Enter the email-id of your buddy</h2>
 		              <form onSubmit={this.handleSubmit}>
 		                <div className="form-group">
 		                    <label>Email address:</label>

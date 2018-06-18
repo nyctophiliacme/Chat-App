@@ -56,6 +56,19 @@ var channelSchema = mongoose.Schema(
 	collection: 'channels'
 });
 
+var buddySchema = mongoose.Schema(
+{
+    _id: mongoose.Schema.Types.ObjectId,
+    directRelation: String,
+    email1: String,
+    email2: String,
+    name1: String,
+    name2: String
+},
+{
+	collection: 'buddies'
+});
+
 var channelUserSchema = mongoose.Schema({
 	_id: mongoose.Schema.Types.ObjectId,
 	email: String,
@@ -80,6 +93,7 @@ var User = mongoose.model('users', userSchema);
 var Channel = mongoose.model('channels', channelSchema);
 var ChannelUser = mongoose.model('channelUsers', channelUserSchema);
 var Message = mongoose.model('messages', messageSchema);
+var Buddy = mongoose.model('buddies', buddySchema);
 //Listen to the required Port
 http.listen(3005, function () {
 	console.log('Server is running. Point your browser to: http://localhost:3005');
@@ -297,6 +311,140 @@ app.post('/createChannel', function(request, response)
 	}
 });
 
+app.post('/addBuddy', function(request, response)
+{
+	response.setHeader('Content-Type', 'application/json');
+	// console.log(request.body);
+	var email1 = request.body.email1;
+	var email2 = request.body.email2;
+	var name1 = request.body.name1;
+	var directRelation = '';
+
+	if(email1 && email2)
+	{
+		if(email1 < email2)
+		{
+			directRelation = email1+'-'+email2;
+		}
+		else
+		{
+			directRelation = email2+'-'+email1;
+		}
+		console.log("Direct Relation" + directRelation);
+		var query = {directRelation : directRelation};
+		Buddy.find(query, function(err, result)
+		{
+			if (err) throw err;
+		    if (typeof result !== 'undefined' && result.length > 0) {
+		    	response.send(JSON.stringify({
+					message: 'Buddy already exists!'
+				}));
+			}
+			else
+			{
+				var userQuery = {email: email2};
+				var constraints = { 
+			        __v: false,
+			        _id: false,
+			        email: false,
+			        password: false
+			    };
+			    User.find(userQuery, constraints, function(err, result)
+			    {
+			    	if(err) throw err;
+
+			    	if(typeof result !== 'undefined' && result.length > 0)
+			    	{
+			    		var name2 = result[0].name;
+			    		var buddyData = {
+							_id: new ObjectID(),
+							directRelation: directRelation,
+							email1: email1,
+							email2: email2,
+							name1: name1,
+							name2: name2
+						};
+			    		var buddyObj = new Buddy(buddyData);
+						buddyObj.save(function(error,data)
+						{
+							if(error)
+							{
+								response.send(JSON.stringify({
+									message: "Unable to write to DB",
+									extra: error
+								}));
+							}
+							else
+							{
+								response.send(JSON.stringify({
+									extra: data,
+									message: "Successful",
+									buddyName: name2
+								}));
+							}
+						});
+			    	}
+			    	else
+			    	{
+			    		response.send(JSON.stringify({
+			    			message: 'No such User found'
+			    		}));
+			    	}
+			    });		
+			}
+		});
+	}
+	else
+	{
+		response.send(JSON.stringify({
+			message: 'Please enter your buddy name'
+		}));
+	}
+});
+
+app.post('/loadBuddies', function(request, response)
+{
+	response.setHeader('Content-Type', 'application/json');
+	if(request.body.email)
+	{
+		var email = request.body.email;
+		var query = { $or: [ {email1: email}, {email2: email} ] };
+		var constraints = {
+			__v: false,
+			_id: false
+		};
+		Buddy.find(query, constraints, function(err, result)
+		{
+			if(err) throw err;
+			console.log(result);
+			var buddyDesc = new Array();
+			for(var i = 0; i < result.length; i++)
+			{
+				if(result[i].email1 === email)
+				{
+					var temp = {'email': result[i].email2, 'name': result[i].name2};
+					buddyDesc.push(temp);
+				}
+				else
+				{
+					var temp = {'email': result[i].email1, 'name': result[i].name1};
+					buddyDesc.push(temp);
+				}
+			}
+			response.send(JSON.stringify({
+		    	message: 'Retrieved Buddies',
+		    	data: result,
+				desc: buddyDesc	
+		    }));
+		});
+	}
+	else
+	{
+		response.send(JSON.stringify({
+			message: 'No email'
+		}));
+	}
+});
 
 app.post('/loadChannels', function(request, response)
 {

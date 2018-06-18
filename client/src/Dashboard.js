@@ -5,6 +5,7 @@ import Channel from './Channel.js';
 import AddUser from './AddUser.js';
 import CreateChannel from "./CreateChannel";
 import MessagesContainer from "./MessagesContainer";
+import AddBuddy from "./AddBuddy";
 export default class Dashboard extends Component
 {
 	constructor(props) {
@@ -15,7 +16,8 @@ export default class Dashboard extends Component
 			channelArray: [],
 			showAddUser: null,
 			showCreateChannel: null,
-			showMessagesContainer: null
+			showMessagesContainer: null,
+			buddies: []
 		};
 		this.logout = this.logout.bind(this);
 		this.changeChannel = this.changeChannel.bind(this);
@@ -25,6 +27,7 @@ export default class Dashboard extends Component
 		this.handleAddUser = this.handleAddUser.bind(this);
 		this.handleCreateChannel = this.handleCreateChannel.bind(this);
 		this.handleMessagesContainer = this.handleMessagesContainer.bind(this);
+		this.handleAddBuddy = this.handleAddBuddy.bind(this);
 		this.currentChannelDesc = null;
 		this.channelDescArray = [];
 		// this.var = "Hello World";
@@ -129,7 +132,8 @@ export default class Dashboard extends Component
 	{
 		this.setState({
 			showCreateChannel: null,
-			showAddUser: null
+			showAddUser: null,
+			showAddBuddy: null
 		});
 	}
 	handleCreateChannel()
@@ -141,12 +145,20 @@ export default class Dashboard extends Component
 				stateHelper = {this.stateHelper} />)
 		});
 	}
+	handleAddBuddy()
+	{
+		this.setState({
+			showAddBuddy: (<AddBuddy user = {this.props.user}
+							stateHelper = {this.stateHelper}/>)
+		});
+	}
 	handleAddUser()
 	{
 		// console.log(this.var);
 		this.setState({
 			showAddUser: (<AddUser channel={this.state.currentChannel}  
-								   stateHelper = {this.stateHelper}/>)
+								   stateHelper = {this.stateHelper}
+								   user = {this.props.user}/>)
 		});
 	}
 	componentDidMount()
@@ -167,19 +179,30 @@ export default class Dashboard extends Component
 				</div>
 				<div className = "container-fluid chat-container">
 					<div className = "row height-100">
-						<div className = "side-bar col-sm-2">
+						<div className = "sidebar col-sm-2">
 							<div className = "welcome">
 								Hi, {this.props.user.name}
 							</div>
-							<div className = "channel-heading">
-								<span className = "temp float-left">
+							<div className = "sidebar-heading">
+								<span className = "float-left">
 									Channels
 								</span>
-								<img src = {plusButton} onClick={this.handleCreateChannel} className = "image-button float-right"  alt = "Add" />
+								<img src = {plusButton} onClick={this.handleCreateChannel} className = "image-button float-right"  alt = "Create Channel" />
 							</div>
-							<div className = "channel-container">
+							<div className = "sidebar-container">
 								<ul className = "sidebar-nav">
 								{this.state.channels}
+								</ul>
+							</div>
+							<div className = "sidebar-heading">
+								<span className = "float-left">
+									Direct Messages
+								</span>
+								<img src = {plusButton} onClick={this.handleAddBuddy} className = "image-button float-right"  alt = "Add Buddy" />
+							</div>
+							<div className = "sidebar-container">
+								<ul className = "sidebar-nav">
+								{this.state.buddies}
 								</ul>
 							</div>
 						</div>
@@ -188,6 +211,7 @@ export default class Dashboard extends Component
 				</div>  
 				{this.state.showAddUser}
 				{this.state.showCreateChannel}
+				{this.state.showAddBuddy}
 			</div>
         );
     }

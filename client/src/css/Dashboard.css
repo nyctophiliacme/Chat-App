@@ -59,19 +59,21 @@
 {
 	height: 100%;
 }
-.side-bar
+.sidebar
 {
 	background-color: var(--pur-light);
 	color: var(--light);
+
+	overflow-y: auto;
 }
 .welcome
 {
 	font-family: OpenSans;
 	margin-top: 10px;
-	border-bottom: 1px solid var(--dark);
+	border-bottom: 2px solid var(--dark);
 	padding: 10px 0;
 }
-.channel-heading
+.sidebar-heading
 {
 	margin-top: 10px;
 	/*font-weight: 600;*/
@@ -89,11 +91,11 @@
 {
 	cursor: pointer;
 }
-.channel-container
+.sidebar-container
 {
-	max-height: 40%;
-	border-bottom: 1px solid var(--dark);
-	overflow-y: auto;
+	/*max-height: 40%;*/
+	border-bottom: 2px solid var(--dark);
+/*	overflow-y: auto;*/
 	padding-bottom: 10px;
 }
 .sidebar-nav
