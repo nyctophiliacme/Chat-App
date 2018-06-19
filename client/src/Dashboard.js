@@ -66,7 +66,7 @@ export default class Dashboard extends Component
 		temp = [];
 		for(i = 0; i < this.state.buddyData.length; i++)
 		{
-			if( this.state.currentChannelOrBuddy === this.state.buddyData[i].email)
+			if( this.state.currentChannelOrBuddy === this.state.buddyData[i].relation)
 			{
 				is_selected = true; 
 				this.currentChannelOrBuddyDesc = 'You are friends with '+this.state.buddyData[i].name+' ('+this.state.buddyData[i].email+')';
@@ -84,7 +84,9 @@ export default class Dashboard extends Component
 				onClick = {this.changeChannel.bind(this)} 
 				isSelected = {is_selected}
 				name = {this.state.buddyData[i].name}
-				email = {this.state.buddyData[i].email} />);
+				email = {this.state.buddyData[i].email}
+				relation = {this.state.buddyData[i].relation}
+				 />);
 		}
 		// console.log(temp);
 		this.setState({

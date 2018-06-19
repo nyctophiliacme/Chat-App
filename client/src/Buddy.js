@@ -8,7 +8,7 @@ export default class Channel extends Component
 	}
 	handleClickLi(e)
 	{
-		this.props.onClick(this.props.email);
+		this.props.onClick(this.props.relation);
 	}
 	render()
 	{

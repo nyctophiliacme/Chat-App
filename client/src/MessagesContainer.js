@@ -110,6 +110,15 @@ export default class MessagesContainer extends Component
 				var element = document.getElementById("message-box-id");
 	    		element.scrollTop = element.scrollHeight;
     		}
+    		else
+    		{
+    			this.prevMessageInfo = {
+					email: '',
+					name: '',
+					date: '',
+					time: ''
+				};
+    		}
     		textBox.disabled = false;
 			// console.log(responseText);
 		})
@@ -143,6 +152,7 @@ export default class MessagesContainer extends Component
 	{
 		if(this.props.channelOrBuddy === 'buddy')
 		{
+			// console.log(this.props.channel);
 			this.setState({
 				channelInfo : 
 					<div className = "channel-info">
