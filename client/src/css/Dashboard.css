@@ -103,6 +103,8 @@
 	margin: 0;
 	padding: 0;
 	list-style: none;
+	font-family: OpenSans;
+	font-size: 1em;
 }
 .sidebar-nav li
 {
@@ -123,4 +125,8 @@
     /*margin-left: 7px;*/
     /*opacity: 0.5;*/
     /*background: rgba(255,255,255,0.2);*/
+}
+.no-show
+{
+	font-size: 0.9em;
 }

@@ -90,7 +90,7 @@ export default class Login extends Component {
               <br />
               <p className="text-danger">{this.state.error}</p>
               <p>
-                  New User? 
+                  New User? &nbsp;
                   <Link to={'/signup'}>Signup</Link>
               </p>
           </div>

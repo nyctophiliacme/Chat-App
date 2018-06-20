@@ -41,57 +41,71 @@ export default class Dashboard extends Component
 	channelBuddyUtility()
 	{
 		var temp = [], i, is_selected;
-		for(i = 0; i < this.state.channelArray.length; i++)
+		if(this.state.channelArray.length === 0)
 		{
-			if( this.state.currentChannelOrBuddy === this.state.channelArray[i].channelName)
-			{
-				is_selected = true; 
-				this.currentChannelOrBuddyDesc = this.channelDescArray[i].description;
-				this.channelOrBuddy = 'channel';
-			}
-			else
-			{
-				is_selected = false;
-			}
-			// console.log(is_selected);
-			temp.push(
-				<Channel key = {i} 
-				onClick = {this.changeChannel.bind(this)} 
-				isSelected = {is_selected}
-				value = {this.state.channelArray[i].channelName} />);
+			//Currently Do nothing
 		}
-		this.setState({
-			channels: temp
-		});
+		else
+		{
+			for(i = 0; i < this.state.channelArray.length; i++)
+			{
+				if( this.state.currentChannelOrBuddy === this.state.channelArray[i].channelName)
+				{
+					is_selected = true; 
+					this.currentChannelOrBuddyDesc = this.channelDescArray[i].description;
+					this.channelOrBuddy = 'channel';
+				}
+				else
+				{
+					is_selected = false;
+				}
+				// console.log(is_selected);
+				temp.push(
+					<Channel key = {i} 
+						onClick = {this.changeChannel.bind(this)} 
+						isSelected = {is_selected}
+						value = {this.state.channelArray[i].channelName} />);
+			}
+			this.setState({
+				channels: temp
+			});
+		}
 		temp = [];
-		for(i = 0; i < this.state.buddyData.length; i++)
+		if(this.state.buddyData.length === 0)
 		{
-			if( this.state.currentChannelOrBuddy === this.state.buddyData[i].relation)
-			{
-				is_selected = true; 
-				this.currentChannelOrBuddyDesc = 'You are friends with '+this.state.buddyData[i].name+' ('+this.state.buddyData[i].email+')';
-				this.channelOrBuddy = 'buddy';
-				this.currentBuddy = this.state.buddyData[i];
-			}
-			else
-			{
-				is_selected = false;
-			}
-			// console.log(is_selected);
-			// console.log(this.state.buddyData[i].name);
-			temp.push(
-				<Buddy key = {i} 
-				onClick = {this.changeChannel.bind(this)} 
-				isSelected = {is_selected}
-				name = {this.state.buddyData[i].name}
-				email = {this.state.buddyData[i].email}
-				relation = {this.state.buddyData[i].relation}
-				 />);
+			//Currently Do nothing
 		}
-		// console.log(temp);
-		this.setState({
-			buddies: temp
-		});
+		else
+		{
+			for(i = 0; i < this.state.buddyData.length; i++)
+			{
+				if( this.state.currentChannelOrBuddy === this.state.buddyData[i].relation)
+				{
+					is_selected = true; 
+					this.currentChannelOrBuddyDesc = 'You are friends with '+this.state.buddyData[i].name+' ('+this.state.buddyData[i].email+')';
+					this.channelOrBuddy = 'buddy';
+					this.currentBuddy = this.state.buddyData[i];
+				}
+				else
+				{
+					is_selected = false;
+				}
+				// console.log(is_selected);
+				// console.log(this.state.buddyData[i].name);
+				temp.push(
+					<Buddy key = {i} 
+						onClick = {this.changeChannel.bind(this)} 
+						isSelected = {is_selected}
+						name = {this.state.buddyData[i].name}
+						email = {this.state.buddyData[i].email}
+						relation = {this.state.buddyData[i].relation}
+					 />);
+			}
+			// console.log(temp);
+			this.setState({
+				buddies: temp
+			});
+		}
 	}
 	handleMessagesContainer()
 	{
@@ -168,6 +182,13 @@ export default class Dashboard extends Component
 				this.channelDescArray = responseText.desc;
 				this.channelBuddyUtility();
 			}
+			else if(responseText.message === "User has no channels")
+			{
+				console.log(responseText.message);
+				this.setState({
+					channels: <i className = "no-show"> No channels to show </i>
+				});
+			}
 			else
 	        {
 	          	console.log(responseText.message);
@@ -195,7 +216,7 @@ export default class Dashboard extends Component
 		.then((response) => response.text())
 		.then((responseText) => {
 			responseText = JSON.parse(responseText);
-			console.log(responseText);
+			// console.log(responseText);
 			if(responseText.message === "Retrieved Buddies")
 			{
 				this.setState({
@@ -203,6 +224,13 @@ export default class Dashboard extends Component
 				});
 				console.log(this.state.buddyData);
 				this.channelBuddyUtility();
+			}
+			else if(responseText.message === "User has no buddies")
+			{
+				console.log(responseText.message);
+				this.setState({
+					buddies: <i className = "no-show"> No buddies to show</i>
+				});
 			}
 			else
 	        {
@@ -237,7 +265,8 @@ export default class Dashboard extends Component
 	{
 		this.setState({
 			showAddBuddy: (<AddBuddy user = {this.props.user}
-							stateHelper = {this.stateHelper}/>)
+							stateHelper = {this.stateHelper}
+							fetchBuddies = {this.fetchBuddies}/>)
 		});
 	}
 	handleAddUser()

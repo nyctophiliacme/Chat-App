@@ -71,6 +71,7 @@ export default class CreateChannel extends Component
 	}
 	handleBack() {
 		this.props.stateHelper();
+		this.props.fetchChannels();
 		// this.setState({
   //           fireRedirect: true
   //       });

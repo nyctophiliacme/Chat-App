@@ -4,6 +4,7 @@ import Home from "./Home";
 import Signup from "./Signup";
 import Dashboard from "./Dashboard";
 import ProfilePage from "./ProfilePage";
+import GenericNotFound from "./GenericNotFound";
 import {
   BrowserRouter as Router,
   Route,
@@ -48,19 +49,36 @@ export default class App extends Component {
       <Router>
       <div className="App">
         <Switch>
-          <Route path="/" exact={true} component={Home} />
-          <Route path="/home" component={Home} />
-          <Route path="/login" render={() => <Login authenticate={this.authenticate} />} />
-          <Route path='/signup' render={() => <Signup authenticate={this.authenticate} />} />
-          <Route path='/dashboard' render={() => 
+      {/*}    <Route exact path="/" component={Home} />   */}
+          <Route exact path='/' 
+                  render={() => 
                     this.state.user.isLoggedIn ? 
-                    <Dashboard authenticate={this.authenticate} user={this.state.user}  /> : 
-                    <Redirect to="/home"/> }/>
+                      <Redirect to="/dashboard" Dashboard authenticate={this.authenticate} user={this.state.user}  /> : 
+                      <Redirect to="/home" Home/> }/>
 
-          <Route path='/user/:email'
+     {/*}     <Route exact path="/home" component={Home} />  */}
+          <Route exact path='/home' 
+                  render={() => 
+                    this.state.user.isLoggedIn ? 
+                      <Redirect to="/dashboard" Dashboard authenticate={this.authenticate} user={this.state.user}  /> : 
+                      <Home/> }/>
+
+          <Route exact path="/login" 
+                       render={() => <Login authenticate={this.authenticate} />} />
+
+          <Route exact path='/signup' 
+                       render={() => <Signup authenticate={this.authenticate} />} />
+
+          <Route exact path='/dashboard' 
+                  render={() => 
+                    this.state.user.isLoggedIn ? 
+                      <Dashboard authenticate={this.authenticate} user={this.state.user}  /> : 
+                      <Redirect to="/home"/> }/>
+
+          <Route exact path='/user/:email'
                  render = { (props) => <ProfilePage {...props} user={this.state.user} />} />
 
-           
+          <Route component = {GenericNotFound} />
         </Switch>
       </div>
       </Router>

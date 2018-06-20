@@ -66,6 +66,7 @@ export default class AddBuddy extends Component
 	}
 	handleBack() {
 		this.props.stateHelper();
+		this.props.fetchBuddies();
 	}
 	render()
 	{

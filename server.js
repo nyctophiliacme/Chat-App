@@ -417,27 +417,36 @@ app.post('/loadBuddies', function(request, response)
 		{
 			if(err) throw err;
 			console.log(result);
-			var buddyDesc = new Array();
-			for(var i = 0; i < result.length; i++)
+			if (typeof result !== 'undefined' && result.length > 0) 
 			{
-				if(result[i].email1 === email)
+				var buddyDesc = new Array();
+				for(var i = 0; i < result.length; i++)
 				{
-					var temp = {'email': result[i].email2, 'name': result[i].name2, 'relation': result[i].directRelation};
-					buddyDesc.push(temp);
+					if(result[i].email1 === email)
+					{
+						var temp = {'email': result[i].email2, 'name': result[i].name2, 'relation': result[i].directRelation};
+						buddyDesc.push(temp);
+					}
+					else
+					{
+						var temp = {'email': result[i].email1, 'name': result[i].name1, 'relation': result[i].directRelation};
+						buddyDesc.push(temp);
+						// buddyEmail.push(result[i].email1);
+						// buddyName.push(result[i].name1);
+					}
+					// buddyRelation.push(result[i].directRelation);
 				}
-				else
-				{
-					var temp = {'email': result[i].email1, 'name': result[i].name1, 'relation': result[i].directRelation};
-					buddyDesc.push(temp);
-					// buddyEmail.push(result[i].email1);
-					// buddyName.push(result[i].name1);
-				}
-				// buddyRelation.push(result[i].directRelation);
+				response.send(JSON.stringify({
+			    	message: 'Retrieved Buddies',
+			    	data: buddyDesc	
+			    }));
 			}
-			response.send(JSON.stringify({
-		    	message: 'Retrieved Buddies',
-		    	data: buddyDesc	
-		    }));
+			else
+			{
+				response.send(JSON.stringify({
+					message: 'User has no buddies'
+				}));
+			}
 		});
 	}
 	else

@@ -37,8 +37,8 @@ export default class Signup extends Component
 		if(responseText.message === "Successful")
 		{
 			this.props.authenticate({
-				name: responseText.name,
-				email: responseText.email,
+				name: this.state.name,
+				email: this.state.email,
 				isLoggedIn: true
 			});
 			this.setState({
@@ -100,7 +100,7 @@ export default class Signup extends Component
 			        <br />
 			        <p className="text-danger">{this.state.error}</p>
 			        <p>
-			            Already have an account? 
+			            Already have an account? &nbsp;
 			            <Link to={'/login'}>Login</Link>
 			        </p>
 			    </div>
