@@ -659,6 +659,44 @@ app.get('/getMessage', function(request, response)
 	}
 });
 
+app.get('/checkUserEmail', function(request, response)
+{
+	response.setHeader('Content-Type', 'application/json');
+	if(request.query.email)
+	{
+		var email = request.query.email;
+		var query = {email: email};
+		var constraints = { 
+	        __v: false,
+	        _id: false,
+	        password: false
+	    };
+		User.find(query, constraints, function(err, result)
+		{
+			if(err) throw err;
+			if(typeof result !== 'undefined' && result.length > 0)
+			{
+				response.send(JSON.stringify({
+					message: 'Found',
+					data: result[0]
+				}));
+			}
+			else
+			{
+				response.send(JSON.stringify({
+					message: 'No such user exists' 
+				}));
+			}
+		});
+	}
+	else
+	{
+		response.send(JSON.stringify({
+			message: 'No email-id passed'
+		}));
+	}
+});
+
 io.sockets.on('connection', function(socket){
 	// console.log("A user has connected");
 
