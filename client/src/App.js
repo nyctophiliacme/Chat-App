@@ -3,6 +3,7 @@ import Login from "./Login";
 import Home from "./Home";
 import Signup from "./Signup";
 import Dashboard from "./Dashboard";
+import ProfilePage from "./ProfilePage";
 import {
   BrowserRouter as Router,
   Route,
@@ -13,7 +14,6 @@ import {
 export default class App extends Component {
   constructor(props) {
     super(props);
-
     let user = {
       isLoggedIn: false
     }
@@ -52,11 +52,15 @@ export default class App extends Component {
           <Route path="/home" component={Home} />
           <Route path="/login" render={() => <Login authenticate={this.authenticate} />} />
           <Route path='/signup' render={() => <Signup authenticate={this.authenticate} />} />
-          <Route path='/dashboard' render={() => (
-            this.state.user.isLoggedIn ? 
-                    (<Dashboard authenticate={this.authenticate} user={this.state.user}  />) : 
-                    (<Redirect to="/home"/>)
-          )} />
+          <Route path='/dashboard' render={() => 
+                    this.state.user.isLoggedIn ? 
+                    <Dashboard authenticate={this.authenticate} user={this.state.user}  /> : 
+                    <Redirect to="/home"/> }/>
+
+          <Route path='/user/:email'
+                 render = { (props) => <ProfilePage {...props} user={this.state.user} />} />
+
+           
         </Switch>
       </div>
       </Router>
