@@ -154,18 +154,16 @@ export default class Dashboard extends Component
 	}
 	fetchChannels()
 	{
-		fetch('/loadChannels',
+		const encodedValue = encodeURIComponent(this.props.user.email);
+		fetch(`/loadChannels?email=${encodedValue}`,
 		{
 			headers:
 			{
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
 			},
-			method: 'POST',
-			credentials: 'same-origin',
-			body: JSON.stringify({
-				email: this.props.user.email
-			})
+			method: 'GET',
+			credentials: 'same-origin'
 		})
 		.then((response) => response.text())
 		.then((responseText) => {
@@ -200,18 +198,16 @@ export default class Dashboard extends Component
 	}
 	fetchBuddies()
 	{
-		fetch('/loadBuddies',
+		const encodedValue = encodeURIComponent(this.props.user.email);
+		fetch(`/loadBuddies?email=${encodedValue}`,
 		{
 			headers: 
 			{
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
 			},
-			method: 'POST',
-			credentials: 'same-origin',
-			body: JSON.stringify({
-				email: this.props.user.email
-			})
+			method: 'GET',
+			credentials: 'same-origin'
 		})
 		.then((response) => response.text())
 		.then((responseText) => {

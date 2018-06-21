@@ -402,12 +402,12 @@ app.post('/addBuddy', function(request, response)
 	}
 });
 
-app.post('/loadBuddies', function(request, response)
+app.get('/loadBuddies', function(request, response)
 {
 	response.setHeader('Content-Type', 'application/json');
-	if(request.body.email)
+	if(request.query.email)
 	{
-		var email = request.body.email;
+		var email = request.query.email;
 		var query = { $or: [ {email1: email}, {email2: email} ] };
 		var constraints = {
 			__v: false,
@@ -457,12 +457,12 @@ app.post('/loadBuddies', function(request, response)
 	}
 });
 
-app.post('/loadChannels', function(request, response)
+app.get('/loadChannels', function(request, response)
 {
 	response.setHeader('Content-Type', 'application/json');
-	var email = request.body.email;
-	if(request.body.email)
+	if(request.query.email)
 	{
+		var email = request.query.email;
 		var query = {email : email};
 		var constraints = { 
 	        __v: false,
