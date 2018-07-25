@@ -9,16 +9,20 @@ A chat application similar to slack.
 |![Interface](./screenshots/createChannel.png) | ![Login Screen](./screenshots/login.png)|
 |![Signup Screen](./screenshots/signup.png) | ![Home Screen](./screenshots/home.png)|
 
-##Issues
+## Issues
 
-After cloning, you might need to perform this operation: 
-$ chmod a+x app/node_modules/.bin/react-scripts
+After cloning, you might need to perform this operation for the error:
+
 Failed to start: react-scripts: Permission Denied
 
+$ chmod a+x app/node_modules/.bin/react-scripts
 
-##Create DB
+
+
+## Create DB
 
 After installing mongoDB, create the database chatAppDB using:
 
 $ mongo
+
 $ use chatAppDB
