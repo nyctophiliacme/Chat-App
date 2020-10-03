@@ -1,9 +1,9 @@
 # Chat-Hub
 A chat application similar to slack.
 
-|  |  |
-| --- | --- |
-|https://img.shields.io/github/issues/nyctophiliacme/Chat-App?style=for-the-badge | ![Interface](./screenshots/addUserToChannel.png)|
+
+![GitHub issues](https://img.shields.io/github/issues/nyctophiliacme/Chat-App?style=for-the-badge)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/nyctophiliacme/Chat-App?style=for-the-badge)
 
 ### Screenshots
 
