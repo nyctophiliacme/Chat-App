@@ -1,6 +1,7 @@
 # Chat-Hub
 A chat application similar to slack.
 
+## DeepSource Issues
 [![DeepSource](https://deepsource.io/gh/nyctophiliacme/Chat-App.svg/?label=active+issues&show_trend=true)](https://deepsource.io/gh/nyctophiliacme/Chat-App/?ref=repository-badge)
 [![DeepSource](https://deepsource.io/gh/nyctophiliacme/Chat-App.svg/?label=resolved+issues&show_trend=true)](https://deepsource.io/gh/nyctophiliacme/Chat-App/?ref=repository-badge)
 
