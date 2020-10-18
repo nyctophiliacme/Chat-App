@@ -696,12 +696,12 @@ io.sockets.on('connection', function(socket){
 	socket.on('send', function(data){
 		if(data.email && data.name && data.channelName && data.message)
 		{
-			var email = data.email;
-			var message = data.message;
-			var channelName = data.channelName;
-			var name = data.name;
-			var date = Date.now();
-			var messageData = {
+			const email = data.email;
+			const message = data.message;
+			const channelName = data.channelName;
+			const name = data.name;
+			const date = Date.now();
+			const messageData = {
 				_id: new ObjectID(),
 				email: email,
 				name: name,
@@ -710,11 +710,11 @@ io.sockets.on('connection', function(socket){
 				date: date
 			};
 			data.date = date;
-			var messageObj = new Message(messageData);
+			const messageObj = new Message(messageData);
 			messageObj.save(function(error, res){
 				if(error)
 				{
-					console.log("Error saving");
+					console.log("Error saving the message sent by user: " + error + " Data is " + data);
 					data.extra = "Error";
 					io.sockets.in(data.channelName).emit('message', data);
 				}
