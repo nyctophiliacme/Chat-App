@@ -12,7 +12,6 @@ export default class Channel extends Component
 	}
 	render()
 	{
-		// console.log(this.props.value+"*********");
 		var liStyle = 
 		{
 			background: '#9b59b6'

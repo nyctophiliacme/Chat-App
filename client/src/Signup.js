@@ -51,11 +51,11 @@ export default class Signup extends Component
 		  	this.setState({
 		        error: responseText.message
 		    });
-		    console.log(responseText.extra);
+		    console.log("API response of signup: " + responseText.extra);
 		}
 		})
 		.catch((error) => {
-		  console.error(error);
+		  console.error("Error in Signup API " + error);
 		});
 	}
 

@@ -49,13 +49,13 @@ export default class AddUser extends Component
 			.then((response) => response.text())
 			.then((responseText) => {
 				responseText = JSON.parse(responseText);
-				console.log(responseText);
+				console.log("Response of add user" + responseText);
 				if(responseText.message === "Successful")
 				{
 					this.setState({
 		                error: '',
 		                email: '',
-		                successMessage: "Successfully added "+this.state.email+" to "+this.props.channel+" Channel"
+		                successMessage: "Successfully added " + this.state.email + " to " + this.props.channel + " Channel"
 		            });
 				}
 				else
@@ -67,7 +67,7 @@ export default class AddUser extends Component
 		        }
 			})
 			.catch((error) => {
-				console.log(error);
+				console.log("Error occurred in add User API" + error);
 			});
 		}
 	}
@@ -81,7 +81,6 @@ export default class AddUser extends Component
 	}
 	render()
 	{
-		// console.log(this.props.channel);
 		return(
 			 <div>
 			 <div className="container-fluid add-box">

@@ -21,11 +21,11 @@ app.use(session({
   // cookie: { secure: true }
 }));
 
-//For mongodb
+// Making mongodb connection
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/chatAppDB";
 
-//For mongoose
+// Mongoose connection
 var mongoose = require('mongoose');
 var ObjectID = require('mongodb').ObjectID;
 

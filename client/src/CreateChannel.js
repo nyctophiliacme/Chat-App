@@ -17,8 +17,6 @@ export default class CreateChannel extends Component
 	}
 	handleSubmit(e)
 	{
-		// console.log(this.props.user);
-		// console.log(this.state);
 		e.preventDefault();
 		fetch('/createChannel',
 		{
@@ -38,7 +36,6 @@ export default class CreateChannel extends Component
 		.then((response) => response.text())
 		.then((responseText) => {
 			responseText = JSON.parse(responseText);
-			// console.log(responseText);
 			if(responseText.message === "Successful")
 			{
 				// this.setState({
@@ -56,7 +53,7 @@ export default class CreateChannel extends Component
 	        }
 		})
 		.catch((error) => {
-			console.log(error);
+			console.log("Error occurred in create channel API" + error);
 		});
 	}
 	handleNameChange(e) {

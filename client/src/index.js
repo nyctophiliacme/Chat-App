@@ -6,7 +6,6 @@ import ReactDOM from 'react-dom';
 import App from './App';
 // import { Switch, Route } from 'react-router';
 
-
 import registerServiceWorker from './registerServiceWorker';
 
 ReactDOM.render(<App />, document.getElementById('root'));
