@@ -29,7 +29,7 @@ export default class ProfilePage extends Component
 		.then((response) => response.text())
 		.then((responseText) => {			
 			responseText = JSON.parse(responseText);
-			console.log(responseText);
+			console.log("Check User Email exists API response: " + responseText);
 			switch(responseText.message)
 			{
 				case 'No such user exists': this.errorDisplay(responseText.message);	

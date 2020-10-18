@@ -53,7 +53,6 @@ export default class MessagesContainer extends Component
 			{
 				for(var i = 0; i < responseText.data.length; i++)
 				{
-					// console.log(responseText.data[i].message +"----->"+ responseText.data[i].date);
 					date = new Date(responseText.data[i].date);
 					time = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 					dateDisplay = date.toLocaleDateString('en-US',options);
@@ -93,7 +92,6 @@ export default class MessagesContainer extends Component
 				}
 				this.globalCounter = i;
 
-				// console.log(responseText.data[this.globalCounter-1]);
 				date = new Date(responseText.data[this.globalCounter-1].date);
 				time = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 				dateDisplay = date.toLocaleDateString('en-US',options);
@@ -102,8 +100,7 @@ export default class MessagesContainer extends Component
 					email: responseText.data[this.globalCounter-1].email,
 					date: dateDisplay
 				};
-				// console.log(this.prevMessageInfo);
-				// console.log(this.prevMessageInfo.date);
+
 				this.setState({
 					displayMessages: temp
 				});
@@ -120,7 +117,6 @@ export default class MessagesContainer extends Component
 				};
     		}
     		textBox.disabled = false;
-			// console.log(responseText);
 		})
 		.catch((error) => {
 			console.error(error);
@@ -137,7 +133,6 @@ export default class MessagesContainer extends Component
 	}
 	componentDidMount()
 	{
-		// console.log("In componentDidMount");
 		this.handleChannelInfo();
 		this.loadMessages();
 		this.socketEnterRoom();
@@ -152,7 +147,6 @@ export default class MessagesContainer extends Component
 	{
 		if(this.props.channelOrBuddy === 'buddy')
 		{
-			// console.log(this.props.channel);
 			this.setState({
 				channelInfo : 
 					<div className = "channel-info">
@@ -196,12 +190,6 @@ export default class MessagesContainer extends Component
 		var dateDisplay = date.toLocaleDateString('en-US',options);
 		var temp = null;
 
-		// console.log(data);
-		// console.log("*************************************");
-		// console.log(this.prevMessageInfo);
-
-
-		// console.log(this);
 		if(dateDisplay !== this.prevMessageInfo.date)
 		{
 			temp = 
@@ -213,7 +201,6 @@ export default class MessagesContainer extends Component
 		}	
 		if(temp)
 		{
-			// console.log(temp);
 			this.setState({
 				displayMessages: [...this.state.displayMessages, temp]
 			});
@@ -242,7 +229,6 @@ export default class MessagesContainer extends Component
 		}
 		if(temp)
 		{
-			// console.log(temp);
 			this.setState({
 				displayMessages: [...this.state.displayMessages, temp]
 			});
@@ -265,13 +251,11 @@ export default class MessagesContainer extends Component
 	}
 	componentDidUpdate(prevProps)
 	{
-		// console.log(this.props);
 		if(prevProps.channel !== this.props.channel)
 		{
 			this.setState({
 				displayMessages: ''
 			});
-			// console.log("In componentDidUpdate");
 			this.handleChannelInfo();
 			this.loadMessages();
 			this.socketLeaveRoom(prevProps.channel);

@@ -12,13 +12,10 @@ export default class AddBuddy extends Component
 		this.handleBack = this.handleBack.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleEmailChange = this.handleEmailChange.bind(this);
-		console.log(this.props);
 	}
 	handleSubmit(e)
 	{
 		e.preventDefault();
-		
-		// 
 		fetch('/addBuddy',
 		{
 			headers:
@@ -37,13 +34,13 @@ export default class AddBuddy extends Component
 		.then((response) => response.text())
 		.then((responseText) => {
 			responseText = JSON.parse(responseText);
-			console.log(responseText);
+			console.log("Response text for add buddy: " + responseText);
 			if(responseText.message === "Successful")
 			{
 				this.setState({
 	                error: '',
 	                email: '',
-	                successMessage: "Successfully added "+responseText.buddyName+" as your buddy"
+	                successMessage: "Successfully added " + responseText.buddyName + " as your buddy"
 	            });
 			}
 			else
@@ -56,7 +53,7 @@ export default class AddBuddy extends Component
 	        }
 		})
 		.catch((error) => {
-			console.log(error);
+			console.log("Error occurred in adding buddy:" + error);
 		});
 	}
 	handleEmailChange(e) {
@@ -70,7 +67,6 @@ export default class AddBuddy extends Component
 	}
 	render()
 	{
-		// console.log(this.props.channel);
 		return(
 			 <div>
 			 <div className="container-fluid add-box">

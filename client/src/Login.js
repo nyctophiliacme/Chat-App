@@ -55,7 +55,7 @@ export default class Login extends Component {
         }
       })
       .catch((error) => {
-          console.error(error);
+          console.error("Error in login API: " + error);
       });
   }
 

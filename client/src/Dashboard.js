@@ -34,8 +34,6 @@ export default class Dashboard extends Component
 		this.handleAddBuddy = this.handleAddBuddy.bind(this);
 		this.currentChannelOrBuddyDesc = null;
 		this.channelDescArray = [];
-		// this.var = "Hello World";
-		// console.log(this.props.user);
 	}
 	currentChannelOrBuddyDesc = null;
 	channelBuddyUtility()
@@ -43,7 +41,7 @@ export default class Dashboard extends Component
 		var temp = [], i, is_selected;
 		if(this.state.channelArray.length === 0)
 		{
-			//Currently Do nothing
+			// Do nothing
 		}
 		else
 		{
@@ -59,7 +57,6 @@ export default class Dashboard extends Component
 				{
 					is_selected = false;
 				}
-				// console.log(is_selected);
 				temp.push(
 					<Channel key = {i} 
 						onClick = {this.changeChannel.bind(this)} 
@@ -73,7 +70,7 @@ export default class Dashboard extends Component
 		temp = [];
 		if(this.state.buddyData.length === 0)
 		{
-			//Currently Do nothing
+			// Do nothing
 		}
 		else
 		{
@@ -90,8 +87,6 @@ export default class Dashboard extends Component
 				{
 					is_selected = false;
 				}
-				// console.log(is_selected);
-				// console.log(this.state.buddyData[i].name);
 				temp.push(
 					<Buddy key = {i} 
 						onClick = {this.changeChannel.bind(this)} 
@@ -101,7 +96,6 @@ export default class Dashboard extends Component
 						relation = {this.state.buddyData[i].relation}
 					 />);
 			}
-			// console.log(temp);
 			this.setState({
 				buddies: temp
 			});
@@ -109,8 +103,6 @@ export default class Dashboard extends Component
 	}
 	handleMessagesContainer()
 	{
-		// console.log("Called handleMessagesContainer");
-		// console.log(this.state.currentChannelOrBuddy);
 		if(this.channelOrBuddy === 'buddy')
 		{
 			this.setState({
@@ -136,7 +128,6 @@ export default class Dashboard extends Component
 	}
 	changeChannel(val)
 	{
-		// console.log(val);
 		if(this.state.currentChannelOrBuddy !== val)
 		{
 			this.currentChannelOrBuddyDesc = '';
@@ -169,10 +160,7 @@ export default class Dashboard extends Component
 		.then((responseText) => {
 			responseText = JSON.parse(responseText);
 			if(responseText.message === "Retrieved Channels")
-			{
-				// console.log(responseText.data);
-				// console.log(responseText.desc);
-				
+			{	
 				// this.state.channelArray = responseText.data;
 				this.setState({
 					channelArray: responseText.data
@@ -182,18 +170,17 @@ export default class Dashboard extends Component
 			}
 			else if(responseText.message === "User has no channels")
 			{
-				console.log(responseText.message);
 				this.setState({
 					channels: <i className = "no-show"> No channels to show </i>
 				});
 			}
 			else
 	        {
-	          	console.log(responseText.message);
+	          	console.log("Response of load channels of user" + responseText.message);
 	        }
 		})
 		.catch((error) => {
-			console.log(error);
+			console.log("Error in load channels API" + error);
 		});
 	}
 	fetchBuddies()
@@ -212,25 +199,24 @@ export default class Dashboard extends Component
 		.then((response) => response.text())
 		.then((responseText) => {
 			responseText = JSON.parse(responseText);
-			// console.log(responseText);
 			if(responseText.message === "Retrieved Buddies")
 			{
 				this.setState({
 					buddyData: responseText.data
 				});
-				console.log(this.state.buddyData);
+				console.log("Loading Buddies API response: " + this.state.buddyData);
 				this.channelBuddyUtility();
 			}
 			else if(responseText.message === "User has no buddies")
 			{
-				console.log(responseText.message);
+				console.log("Loading Buddies API response: the user has no buddies: " + responseText.message);
 				this.setState({
 					buddies: <i className = "no-show"> No buddies to show</i>
 				});
 			}
 			else
 	        {
-	          	console.log(responseText.message);
+	          	console.log("Loading Buddies API response: " + responseText.message);
 	        }
 		})
 		.catch((error) => 
@@ -267,7 +253,6 @@ export default class Dashboard extends Component
 	}
 	handleAddUser()
 	{
-		// console.log(this.var);
 		this.setState({
 			showAddUser: (<AddUser channel={this.state.currentChannelOrBuddy}  
 								   stateHelper = {this.stateHelper}

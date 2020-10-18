@@ -21,13 +21,13 @@ app.use(session({
   // cookie: { secure: true }
 }));
 
-//For mongodb
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/chatAppDB";
+// Making mongodb connection
+const MongoClient = require('mongodb').MongoClient;
+const url = "mongodb://localhost:27017/chatAppDB";
 
-//For mongoose
-var mongoose = require('mongoose');
-var ObjectID = require('mongodb').ObjectID;
+// Mongoose connection
+const mongoose = require('mongoose');
+const ObjectID = require('mongodb').ObjectID;
 
 mongoose.connect(url, function(err)
 {
@@ -36,7 +36,7 @@ mongoose.connect(url, function(err)
 	console.log("Mongoose connection established");
 });
 
-var userSchema = mongoose.Schema({
+const userSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     name: String,
     email: String,
@@ -46,7 +46,7 @@ var userSchema = mongoose.Schema({
 	collection: 'users'
 });
 
-var channelSchema = mongoose.Schema(
+const channelSchema = mongoose.Schema(
 {
     _id: mongoose.Schema.Types.ObjectId,
     channelName: String,
@@ -56,7 +56,7 @@ var channelSchema = mongoose.Schema(
 	collection: 'channels'
 });
 
-var buddySchema = mongoose.Schema(
+const buddySchema = mongoose.Schema(
 {
     _id: mongoose.Schema.Types.ObjectId,
     directRelation: String,
@@ -69,7 +69,7 @@ var buddySchema = mongoose.Schema(
 	collection: 'buddies'
 });
 
-var channelUserSchema = mongoose.Schema({
+const channelUserSchema = mongoose.Schema({
 	_id: mongoose.Schema.Types.ObjectId,
 	email: String,
 	channelName: String
@@ -78,7 +78,7 @@ var channelUserSchema = mongoose.Schema({
 	collection: 'channelUsers'
 });
 
-var messageSchema = mongoose.Schema({
+const messageSchema = mongoose.Schema({
 	_id: mongoose.Schema.Types.ObjectId,
 	email: String,
 	name: String,
@@ -89,20 +89,18 @@ var messageSchema = mongoose.Schema({
 {
 	collection: 'messages'
 });
-var User = mongoose.model('users', userSchema);
-var Channel = mongoose.model('channels', channelSchema);
-var ChannelUser = mongoose.model('channelUsers', channelUserSchema);
-var Message = mongoose.model('messages', messageSchema);
-var Buddy = mongoose.model('buddies', buddySchema);
-//Listen to the required Port
+const User = mongoose.model('users', userSchema);
+const Channel = mongoose.model('channels', channelSchema);
+const ChannelUser = mongoose.model('channelUsers', channelUserSchema);
+const Message = mongoose.model('messages', messageSchema);
+const Buddy = mongoose.model('buddies', buddySchema);
+// Listen to the required Port
 http.listen(3005, function () {
 	console.log('Server is running. Point your browser to: http://localhost:3005');
 });
 
 app.get('/checkLogin', function(request, response)
 {
-	// console.log(request.session.email);
-	// console.log(request.session);
 	if(!request.session.email)
 	{
 		response.send(JSON.stringify({
@@ -145,7 +143,6 @@ app.post('/signup', function(request, response)
 	User.find(query, function(err, result)
 	{
 		if (err) throw err;
-		// console.log(result);
 	    if (typeof result !== 'undefined' && result.length > 0) {
 	    	response.send(JSON.stringify({
 				message: 'User exists'
@@ -178,8 +175,6 @@ app.post('/signup', function(request, response)
 app.post('/login', function(request, response)
 {
 	response.setHeader('Content-Type', 'application/json');
-	// console.log(request.body.email);
-	// console.log(request);
 	var email = request.body.email;
 	var password = request.body.password;
 	// request.session.email = email;
@@ -200,15 +195,10 @@ app.post('/login', function(request, response)
 	User.find(query, function(err, result)
 	{
 		if (err) throw err;
-		// console.log(result);
 	    if (typeof result !== 'undefined' && result.length > 0) {
-		    // console.log("User Exists");
-		    // console.log(result[0].password);
-		    // console.log(result);
 		    if(result[0].password == password)
 		    {
 		    	save_session(request, email);
-		    	// console.log(request.session);
 		    	response.send(JSON.stringify({
 		    		email: email,
 		    		name: result[0].name,
@@ -233,14 +223,11 @@ app.post('/login', function(request, response)
 var save_session = function(request, email)
 {
 	request.session.email = email;
-	// console.log(request.session);
-	// console.log(request.session.email);
 }
 
 app.post('/createChannel', function(request, response)
 {
 	response.setHeader('Content-Type', 'application/json');
-	// console.log(request.body);
 	var email = request.body.email;
 	var channelName = request.body.channelName;
 	var description = request.body.description;
@@ -314,7 +301,6 @@ app.post('/createChannel', function(request, response)
 app.post('/addBuddy', function(request, response)
 {
 	response.setHeader('Content-Type', 'application/json');
-	// console.log(request.body);
 	var email1 = request.body.email1;
 	var email2 = request.body.email2;
 	var name1 = request.body.name1;
@@ -330,7 +316,7 @@ app.post('/addBuddy', function(request, response)
 		{
 			directRelation = email2+'-'+email1;
 		}
-		console.log("Direct Relation" + directRelation);
+		console.log("Direct Relation of the buddies is: " + directRelation);
 		var query = {directRelation : directRelation};
 		Buddy.find(query, function(err, result)
 		{
@@ -472,12 +458,10 @@ app.get('/loadChannels', function(request, response)
 		ChannelUser.find(query, constraints, function(err, result)
 		{
 			if (err) throw err;
-			// console.log(result);
 		    if (typeof result !== 'undefined' && result.length > 0) {
 				var channelDesc = new Array();
 		    	asyncLoop(0, result, channelDesc, function()
 				{
-					// console.log(channelDesc);
 					response.send(JSON.stringify({
 				    	message: 'Retrieved Channels',
 				    	data: result,
@@ -515,7 +499,6 @@ function asyncLoop(i, result, channelDesc, callback)
     		if(err) throw err;
     		if(typeof resultDesc !== 'undefined' && resultDesc.length > 0)
     		{
-    			// console.log(resultDesc[0]);
     			channelDesc.push(resultDesc[0]);
     			asyncLoop(i+1, result, channelDesc, callback);
     		}
@@ -531,7 +514,6 @@ function asyncLoop(i, result, channelDesc, callback)
 app.post('/addUser', function(request, response)
 {
 	response.setHeader('Content-Type', 'application/json');
-	// console.log(request.body);
 	var email = request.body.email;
 	var channelName = request.body.channelName;
 
@@ -564,7 +546,6 @@ app.post('/addUser', function(request, response)
 						}
 						else
 						{
-							// console.log(result);
 							if(typeof result !== 'undefined' && result.length > 0)
 							{
 								response.send(JSON.stringify({
@@ -619,18 +600,12 @@ app.post('/addUser', function(request, response)
 
 app.post('/postMessage', function(request, response)
 {
-	response.setHeader('Content-Type', 'application/json');
-
-	// console.log(request.body);
-	// console.log(Date.now());
-
-	
+	response.setHeader('Content-Type', 'application/json');	
 });
 
 app.get('/getMessage', function(request, response)
 {
 	response.setHeader('Content-Type', 'application/json');
-	// console.log(request.query.channelName);
 	if(request.query.channelName)
 	{
 		var channelName = request.query.channelName;
@@ -721,12 +696,12 @@ io.sockets.on('connection', function(socket){
 	socket.on('send', function(data){
 		if(data.email && data.name && data.channelName && data.message)
 		{
-			var email = data.email;
-			var message = data.message;
-			var channelName = data.channelName;
-			var name = data.name;
-			var date = Date.now();
-			var messageData = {
+			const email = data.email;
+			const message = data.message;
+			const channelName = data.channelName;
+			const name = data.name;
+			const date = Date.now();
+			const messageData = {
 				_id: new ObjectID(),
 				email: email,
 				name: name,
@@ -735,11 +710,11 @@ io.sockets.on('connection', function(socket){
 				date: date
 			};
 			data.date = date;
-			var messageObj = new Message(messageData);
+			const messageObj = new Message(messageData);
 			messageObj.save(function(error, res){
 				if(error)
 				{
-					console.log("Error saving");
+					console.log("Error saving the message sent by user: " + error + " Data is " + data);
 					data.extra = "Error";
 					io.sockets.in(data.channelName).emit('message', data);
 				}
